@@ -1,0 +1,13 @@
+Quit Smoke is a quit-smoking app built around two simple tools: Smoke-Free Timer and Craving Escape.
+
+Many smokers genuinely want to quit. But when a craving hits, that decision can suddenly feel far away. The urge to smoke becomes the main thing on their mind, they smoke to get through the moment, and afterward they remember that they wanted to quit. The same cycle can repeat again and again: want to quit → craving hits → smoke → regret → want to quit again.
+
+Quit Smoke is designed for that exact moment. When a craving hits, the user opens Craving Escape instead of reaching for a cigarette. The routine is simple and always follows the same two steps: Walk → Breathe. First, the user gets up and takes a short walk. Then they immediately follow simple guided breathing. The goal is to give the user something clear and physical to do while the craving passes, instead of sitting with the urge and thinking about smoking.
+
+The Smoke-Free Timer helps the user build a simple daily rule: “Timer running → I don’t smoke.” During the first 7 days, the timer automatically grows from short periods to a full 24-hour run by Day 7: Day 1 — 30 minutes, Day 2 — 1 hour, Day 3 — 2 hours, Day 4 — 4 hours, Day 5 — 8 hours, Day 6 — 12 hours, and Day 7 — 24 hours. From Day 8 onward, the timer continues running for the selected plan. The user does not need to create or manage individual timer sessions—the app handles the progression automatically.
+
+Whenever a craving appears, Craving Escape gives the user a clear alternative to smoking: Walk → Breathe → Move on. Each time the user gets through a craving without smoking, they have another smoke-free experience to build on. The app does not require the user to remember complicated instructions or fight the craving with willpower alone.
+
+The app also includes Trigger Zones, which can remind users when they are near places where they usually smoke or buy cigarettes; Home and Lock Screen widgets that keep their Smoke-Free Timer and Craving Escape easily accessible; persistent notifications that keep the smoke-free goal visible; and progress tracking for smoke-free days, cravings cleared, steps walked, and money saved.
+
+The overall idea is simple: when you want to quit but a craving makes smoking feel like the easiest option, Quit Smoke gives you something simple to do instead. Keep the Smoke-Free Timer running. When a craving hits, Walk → Breathe → Move on.
