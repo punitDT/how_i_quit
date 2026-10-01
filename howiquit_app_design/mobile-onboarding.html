@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark light" />
+<title>Quit Smoke — Onboarding</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   DESIGN-SYSTEM TOKENS — design-systems/spacex/tokens.css (verbatim)
+   ═══════════════════════════════════════════════════════════════════════ */
+:root {
+  --bg: #000000;
+  --surface: #000000;
+  --surface-warm: var(--surface);
+
+  --fg: #f0f0fa;
+  --fg-2: var(--fg);
+  --muted: rgba(240, 240, 250, 0.7);
+  --meta: var(--muted);
+
+  --border: rgba(240, 240, 250, 0.35);
+  --border-soft: rgba(240, 240, 250, 0.1);
+
+  --accent: #f0f0fa;
+  --accent-on: #000000;
+  --accent-hover: #ffffff;
+  --accent-active: #d8d8e6;
+
+  --success: #16a34a;
+  --warn: #eab308;
+  --danger: #dc2626;
+
+  --font-display: "D-DIN-Bold", "D-DIN", "DIN Alternate", "Helvetica Neue", Arial, Verdana, sans-serif;
+  --font-body: "D-DIN", "DIN Alternate", "Helvetica Neue", Arial, Verdana, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+
+  --text-xs: 10px;
+  --text-sm: 12px;
+  --text-base: 16px;
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 32px;
+  --text-3xl: 40px;
+  --text-4xl: 48px;
+
+  --leading-body: 1.5;
+  --leading-tight: 1.0;
+  --tracking-display: 0.02em;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  --section-y-desktop: 120px;
+  --section-y-tablet: 80px;
+  --section-y-phone: 56px;
+
+  --radius-sm: 4px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-pill: 32px;
+
+  --elev-flat: none;
+  --elev-ring: 0 0 0 1px var(--border);
+  --elev-raised: none;
+
+  --focus-ring: 0 0 0 2px var(--accent);
+
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  --container-max: 1440px;
+  --container-gutter-desktop: 24px;
+  --container-gutter-tablet: 20px;
+  --container-gutter-phone: 18px;
+}
+
+/* ─── light theme: the inversion, not a mirror ─────────────────────── */
+:root[data-theme="light"] {
+  --bg: #FFFFFF;
+  --surface: #FFFFFF;
+  --fg: #0A0A0A;
+  --muted: rgba(10, 10, 10, 0.62);
+  --border: rgba(10, 10, 10, 0.3);
+  --border-soft: rgba(10, 10, 10, 0.1);
+  --accent: #0A0A0A;
+  --accent-on: #FFFFFF;
+  --accent-hover: #2A2A2A;
+  --accent-active: #000000;
+  color-scheme: light;
+}
+
+/* ─── type: D-DIN aliases (local first, then locally-hosted Saira) ──── */
+@font-face { font-family: "D-DIN"; font-weight: 100 900; font-display: swap;
+  src: local("D-DIN"), local("DIN Alternate"), local("Bahnschrift"),
+       url("assets/fonts/saira-var.woff2") format("woff2"); }
+@font-face { font-family: "D-DIN-Bold"; font-weight: 700; font-display: swap;
+  src: local("D-DIN-Bold"), url("assets/fonts/saira-var.woff2") format("woff2"); }
+@font-face { font-family: "D-DIN-Cond"; font-weight: 700; font-display: swap;
+  src: local("D-DIN-Cond"), url("assets/fonts/saira-cond-700.woff2") format("woff2"); }
+
+/* ─── base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: var(--text-base); line-height: var(--leading-body);
+  text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased;
+}
+img, svg { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; cursor: pointer; background: none; border: 0; }
+p, h1, h2, h3, figcaption { margin: 0; }
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+/* ─── page stage ───────────────────────────────────────────────────── */
+.page { min-height: 100dvh; display: flex; flex-direction: column; }
+.bar {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+  width: 100%; max-width: 1180px; margin-inline: auto;
+  padding: var(--space-4) var(--space-6); border-bottom: 1px solid var(--border-soft);
+}
+.bar__mark { font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; }
+.bar__note { font-size: var(--text-xs); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.deck { flex: 1; display: grid; place-items: center; padding: var(--space-8) var(--space-4); }
+.device {
+  container-type: inline-size; width: 390px; height: 844px; position: relative;
+  border: 1px solid var(--border); border-radius: 44px; background: var(--bg);
+  overflow: hidden; display: flex; flex-direction: column;
+}
+.device__glare { position: absolute; inset: 0; pointer-events: none; z-index: 4; border-radius: inherit; box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--fg) 6%, transparent); }
+
+/* ─── phone chrome ─────────────────────────────────────────────────── */
+.status {
+  flex: none; display: flex; align-items: center; justify-content: space-between;
+  height: 44px; padding: 0 30px; font-size: var(--text-sm); font-weight: 700; letter-spacing: 0.04em;
+}
+.status__icons { display: flex; align-items: center; gap: 5px; }
+.notch { flex: none; height: 26px; display: grid; place-items: center; }
+.notch span { width: 108px; height: 26px; border-radius: 14px; background: color-mix(in oklch, var(--fg) 100%, transparent); opacity: 0.9; }
+
+.screen { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+
+/* ─── onboarding top rail ──────────────────────────────────────────── */
+.ob-top {
+  flex: none; display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-2) var(--space-5) var(--space-4);
+}
+.back { width: 44px; height: 44px; display: grid; place-items: center; color: var(--muted); border-radius: var(--radius-pill); }
+.back:hover { color: var(--fg); background: color-mix(in oklch, var(--fg) 8%, transparent); }
+.back[disabled] { opacity: 0.28; cursor: default; }
+.back[disabled]:hover { background: none; }
+.rail { flex: 1; display: flex; gap: 3px; height: 3px; }
+.rail span { flex: 1; background: var(--border-soft); }
+.rail span.is-done { background: color-mix(in oklch, var(--fg) 45%, transparent); }
+.rail span.is-now { background: var(--accent); }
+.count { font-size: var(--text-xs); letter-spacing: 0.14em; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* ─── step body ────────────────────────────────────────────────────── */
+.ob { flex: 1; min-height: 0; overflow-y: auto; padding: 0 var(--space-5); scrollbar-width: none; }
+.ob::-webkit-scrollbar { display: none; }
+.step { display: none; padding-bottom: var(--space-8); }
+.step.is-on { display: block; animation: rise 260ms var(--ease-standard) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .step.is-on { animation: none; }
+  .curve__line { animation: none; stroke-dashoffset: 0; }
+}
+
+.eyebrow {
+  font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: var(--space-3);
+}
+.t-title {
+  font-family: var(--font-display); font-weight: 700; line-height: 1.04;
+  font-size: clamp(25px, 7.4cqi, 30px); letter-spacing: 0.005em; margin-bottom: var(--space-4);
+}
+.prose { font-size: 15.5px; line-height: 1.62; color: var(--muted); max-width: 34ch; }
+.prose + .prose { margin-top: var(--space-3); }
+.fig { margin-top: var(--space-6); }
+.fig svg { width: 100%; height: auto; }
+figcaption { margin-top: var(--space-3); font-size: var(--text-sm); line-height: 1.5; color: var(--muted); }
+
+/* ─── the loop: four steps, always the same four ─────────────────── */
+.loop { position: relative; width: 100%; max-width: 288px; aspect-ratio: 1; margin: var(--space-6) auto 0; }
+.loop__ring { width: 100%; height: 100%; }
+.loop__node {
+  position: absolute; padding: 2px 5px; background: var(--bg); white-space: nowrap;
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+}
+.loop__node b { margin-right: 6px; color: var(--fg); font-variant-numeric: tabular-nums; }
+.loop__node--n { top: 0; left: 50%; transform: translate(-50%, -50%); }
+.loop__node--e { right: 0; top: 50%; transform: translate(50%, -50%); }
+.loop__node--s { bottom: 0; left: 50%; transform: translate(-50%, 50%); }
+.loop__node--w { left: 0; top: 50%; transform: translate(-50%, -50%); }
+.loop__hub {
+  position: absolute; inset: 0; margin: auto; width: 108px; height: 108px; padding: 0 12px;
+  display: grid; place-content: center; text-align: center; border: 1px solid var(--border-soft);
+  border-radius: 50%; font-family: var(--font-display); font-weight: 700; font-size: 13px;
+  line-height: 1.24; letter-spacing: 0.06em; text-transform: uppercase;
+}
+
+/* ─── the craving curve: it always comes back down ───────────────── */
+.curve { margin-top: var(--space-6); }
+.curve__plot { position: relative; }
+.curve__plot svg { width: 100%; height: auto; overflow: visible; }
+.curve__base { fill: none; stroke: var(--border-soft); stroke-width: 1; }
+.curve__line {
+  fill: none; stroke: var(--fg); stroke-width: 1.6; stroke-linecap: round;
+  stroke-dasharray: 100; stroke-dashoffset: 100; animation: draw 2400ms var(--ease-standard) forwards;
+}
+.curve__halo { fill: none; stroke: var(--border); stroke-width: 1; }
+.curve__peak { fill: var(--fg); }
+.curve__tag { position: absolute; font-size: 9.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.curve__tag--peak { top: 0; left: 50%; transform: translate(-50%, -100%); color: var(--fg); }
+.curve__tag--end { top: 60%; right: 0; }
+.curve__span { display: flex; align-items: center; gap: var(--space-3); margin-top: var(--space-2); font-size: 9.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.curve__span::before, .curve__span::after { content: ""; flex: 1; height: 1px; background: var(--border-soft); }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* ─── the method in three columns (fill / outline, never colour) ──── */
+.tri { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-4); margin-top: var(--space-6); }
+.tri__c { border-top: 1px solid var(--border); padding-top: var(--space-3); }
+.tri__c:first-child { border-color: var(--fg); }
+.tri__i { width: 24px; height: 24px; color: var(--fg); }
+.tri__t { margin-top: var(--space-3); font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; }
+.tri__d { margin-top: 6px; font-size: 12.5px; line-height: 1.45; color: var(--muted); }
+
+/* ─── rows (fill / outline / inversion — never colour) ─────────────── */
+.rows { margin-top: var(--space-6); border-top: 1px solid var(--border-soft); }
+.row-i { display: flex; gap: var(--space-4); padding: var(--space-4) 0; border-bottom: 1px solid var(--border-soft); }
+.row-i__n { flex: none; width: 22px; font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.06em; color: var(--muted); padding-top: 3px; font-variant-numeric: tabular-nums; }
+.row-i__b { min-width: 0; }
+.row-i__t { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.row-i__d { font-size: 14px; line-height: 1.5; color: var(--muted); margin-top: 4px; }
+.row-i__mark { flex: none; width: 20px; height: 20px; color: var(--muted); padding-top: 1px; }
+.row-i:hover .row-i__mark { color: var(--fg); }
+
+/* ─── the rule, set as type ────────────────────────────────────────── */
+.rule-line {
+  margin-top: var(--space-6); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: var(--space-5); font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(17px, 4.6cqi, 20px); line-height: 1.2; letter-spacing: 0.02em; text-transform: uppercase;
+}
+
+/* ─── 7-day ramp: fill height = progress through the ramp ──────────── */
+/* one gap and one separator, held in variables so the bar row, the hour row
+   and the day row can never drift apart from each other or from Home */
+.ramp { margin-top: var(--space-6); --ramp-gap: 4px; --ramp-sep: 4px; }
+.ramp__track { display: flex; align-items: flex-end; gap: var(--ramp-gap); height: 104px; border-bottom: 1px solid var(--border); }
+.ramp__col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
+.ramp__fill { background: color-mix(in oklch, var(--fg) 26%, transparent); }
+.ramp__col.is-start .ramp__fill, .ramp__col.is-end .ramp__fill { background: var(--accent); }
+.ramp__labels { display: flex; gap: var(--ramp-gap); margin-top: var(--space-2); }
+.ramp__lab { flex: 1; text-align: center; font-size: 9.5px; letter-spacing: 0.04em; color: var(--muted); font-variant-numeric: tabular-nums; }
+.ramp__days { display: flex; gap: var(--ramp-gap); margin-top: 6px; }
+.ramp__day { flex: 1; text-align: center; font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.1em; color: var(--muted); }
+.ramp__day.is-key { color: var(--fg); }
+/* eighth column: the ramp is seven days and then it holds — the hold never
+   ends, so this one rises past the top of the ramp, keeps its edge, and has
+   no hour target. It overhangs upward out of the track, so the ramp still
+   reads as seven days and the eighth reads as beyond them.
+   its title is the plan itself (3M here), not an eighth day number, because
+   what continues past Day 7 is the plan and not another day of the ramp. */
+.ramp__col.is-cont { margin-left: var(--ramp-sep); border-left: 1px solid var(--border-soft); padding-left: var(--ramp-sep); height: 118%; }
+.ramp__col.is-cont .ramp__fill { background: color-mix(in oklch, var(--fg) 45%, transparent); }
+.ramp__lab.is-cont, .ramp__day.is-cont { margin-left: var(--ramp-sep); padding-left: var(--ramp-sep); }
+.ramp__day.is-cont { color: var(--fg); }
+
+/* ─── slots ────────────────────────────────────────────────────────── */
+.slots { margin-top: var(--space-6); border-top: 1px solid var(--border-soft); padding-top: var(--space-4); }
+.slots__t { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.slots__d { margin-top: 6px; font-size: 14px; line-height: 1.5; color: var(--muted); }
+.slots__g { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: var(--space-3); }
+.slots__g button {
+  min-height: 44px; border: 1px solid var(--border-soft); border-radius: var(--radius-pill);
+  font-size: var(--text-sm); font-weight: 700; letter-spacing: 0.1em; color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--motion-fast), background var(--motion-fast), border-color var(--motion-fast);
+}
+.slots__g button:hover { color: var(--fg); border-color: var(--border); }
+.slots__g button[aria-pressed="true"] { color: var(--fg); border-color: var(--fg); background: color-mix(in oklch, var(--fg) 8%, transparent); }
+.slots__n { margin-top: var(--space-3); font-size: var(--text-xs); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+/* ─── form ─────────────────────────────────────────────────────────── */
+.field { margin-top: var(--space-5); }
+.field__label { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.stepper { display: flex; align-items: center; justify-content: space-between; margin-top: var(--space-2); border-bottom: 1px solid var(--border); padding-bottom: var(--space-3); }
+.stepper__btn { width: 48px; height: 48px; border: 1px solid var(--border); border-radius: var(--radius-pill); display: grid; place-items: center; color: var(--fg); transition: background var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard); }
+.stepper__btn:hover { background: color-mix(in oklch, var(--fg) 10%, transparent); border-color: var(--fg); }
+.stepper__val { font-family: var(--font-display); font-weight: 700; font-size: 40px; line-height: 1; letter-spacing: 0.01em; font-variant-numeric: tabular-nums; }
+.stepper__val small { font-size: var(--text-sm); font-weight: 400; letter-spacing: 0.12em; color: var(--muted); margin-left: 6px; }
+.money { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-2); border-bottom: 1px solid var(--border); }
+.money__sym { font-size: var(--text-lg); color: var(--muted); }
+.money input { flex: 1; min-width: 0; background: none; border: 0; color: var(--fg); font-family: var(--font-display); font-weight: 700; font-size: 28px; letter-spacing: 0.01em; padding: var(--space-2) 0; font-variant-numeric: tabular-nums; }
+.money input:focus-visible { outline: none; }
+.money:focus-within { border-color: var(--fg); }
+.seg { display: flex; gap: 6px; margin-top: var(--space-2); }
+.seg button { flex: 1; min-height: 44px; border: 1px solid var(--border-soft); border-radius: var(--radius-pill); font-size: var(--text-sm); font-weight: 700; letter-spacing: 0.1em; color: var(--muted); transition: color var(--motion-fast), background var(--motion-fast), border-color var(--motion-fast); }
+.seg button:hover { color: var(--fg); border-color: var(--border); }
+.seg button[aria-pressed="true"] { color: var(--fg); border-color: var(--fg); background: color-mix(in oklch, var(--fg) 8%, transparent); }
+
+.savings { margin-top: var(--space-6); border: 1px solid var(--border); border-radius: var(--radius-md); display: flex; }
+.savings div { flex: 1; padding: var(--space-4) var(--space-3); }
+.savings div + div { border-left: 1px solid var(--border-soft); }
+.savings b { display: block; font-family: var(--font-display); font-weight: 700; font-size: 19px; letter-spacing: 0.01em; font-variant-numeric: tabular-nums; }
+.savings span { display: block; margin-top: 4px; font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+
+/* ─── plan picker ──────────────────────────────────────────────────── */
+.plan { margin-top: var(--space-5); display: grid; gap: var(--space-2); }
+.plan button { display: flex; align-items: center; gap: var(--space-3); width: 100%; min-height: 68px; text-align: left; padding: var(--space-3) var(--space-4); border: 1px solid var(--border-soft); border-radius: var(--radius-md); transition: border-color var(--motion-fast) var(--ease-standard), background var(--motion-fast) var(--ease-standard); }
+.plan button:hover { border-color: var(--border); background: color-mix(in oklch, var(--fg) 5%, transparent); }
+.plan button[aria-pressed="true"] { border-color: var(--fg); }
+.plan__tick { flex: none; width: 18px; height: 18px; border: 1px solid var(--border); border-radius: 50%; }
+.plan button[aria-pressed="true"] .plan__tick { border: 5px solid var(--accent); }
+.plan__b { flex: 1; min-width: 0; }
+.plan__t { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+
+.plan__p { font-family: var(--font-display); font-weight: 700; font-size: 22px; font-variant-numeric: tabular-nums; }
+.tag { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; border: 1px solid var(--border); border-radius: var(--radius-pill); padding: 3px 7px; color: var(--muted); margin-left: 6px; white-space: nowrap; }
+.sec { margin-top: var(--space-5); }
+.sec__l { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: var(--space-3); }
+.card { border: 1px solid var(--border-soft); border-radius: var(--radius-md); background: color-mix(in oklch, var(--fg) 3%, transparent); }
+
+/* ─── what the plan adds: only what it actually adds ────────────────── */
+.adds > div { padding-bottom: var(--space-3); border-bottom: 1px solid var(--border-soft); }
+.adds > div:last-child { padding-bottom: 0; border-bottom: 0; }
+.adds__k { font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--fg); }
+.adds__l { display: grid; grid-template-columns: 40px 1fr; gap: var(--space-2); align-items: baseline;
+  margin-top: 6px; font-size: 13.5px; line-height: 1.45; }
+.adds__tag { font-family: var(--font-display); font-size: var(--text-xs); font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; }
+.adds__l--f { color: var(--muted); }
+.adds__l--p { color: var(--fg); }
+
+/* ─── foot: one filled primary CTA ─────────────────────────────────── */
+.ob-foot {
+  flex: none; border-top: 1px solid var(--border-soft);
+  padding: var(--space-3) var(--space-5) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  display: flex; flex-direction: column; gap: var(--space-2);
+}
+.cta {
+  min-height: 54px; border-radius: var(--radius-pill); background: var(--accent); color: var(--accent-on);
+  font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase;
+  display: flex; align-items: center; justify-content: center; gap: var(--space-2); width: 100%; text-decoration: none;
+  transition: background var(--motion-fast) var(--ease-standard), transform 60ms var(--ease-standard);
+}
+.cta:hover { background: var(--accent-hover); }
+.cta:active { background: var(--accent-active); transform: translateY(1px); }
+.cta--ghost { background: none; color: var(--muted); min-height: 44px; font-size: var(--text-sm); letter-spacing: 0.12em; }
+.cta--ghost:hover { color: var(--fg); }
+/* two-line primary CTA: the action on the first line, the money it keeps on the
+   line under it. The second line dims the accent-on foreground rather than the
+   fill, so contrast never drops, and the 54px minimum still governs the height,
+   so the foot does not change size between steps. */
+.cta--stack { flex-direction: column; gap: 2px; padding-block: 9px; text-align: center; }
+.cta__sub { font-family: var(--font-body); font-weight: 400; font-size: 9.5px; letter-spacing: 0.14em; color: color-mix(in oklch, var(--accent-on) 78%, transparent); }
+
+@media (max-width: 720px) {
+  .bar { padding: var(--space-3) var(--space-4); }
+  .bar__note { display: none; }
+  .deck { padding: 0; }
+  .device { width: 100%; height: 100dvh; border: 0; border-radius: 0; }
+  .notch { display: none; }
+  .status { padding-top: env(safe-area-inset-top, 0px); height: calc(44px + env(safe-area-inset-top, 0px)); }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="bar" data-od-id="page-bar">
+    <span class="bar__mark">Quit Smoke</span>
+    <span class="bar__note">Onboarding · 7 steps · light &amp; dark</span>
+    <button class="cta cta--ghost" id="theme" data-od-id="theme-toggle" style="min-width:96px;">Light</button>
+  </div>
+
+  <div class="deck">
+    <div class="device" data-od-id="device">
+      <div class="notch"><span></span></div>
+      <div class="status" aria-hidden="true">
+        <span id="clock">9:41</span>
+        <span class="status__icons">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4"/><rect x="4.5" y="5" width="3" height="6"/><rect x="9" y="2.5" width="3" height="8.5"/><rect x="13.5" y="0" width="3" height="11"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 10.2 1.2 4.4a9.6 9.6 0 0 1 13.6 0L8 10.2Z" opacity=".95"/></svg>
+          <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="15" height="8" rx="1.6" fill="currentColor"/><path d="M23 4v4a2 2 0 0 0 0-4Z" fill="currentColor" opacity=".5"/></svg>
+        </span>
+      </div>
+
+      <div class="screen">
+        <div class="ob-top" data-od-id="step-rail">
+          <button class="back" id="back" data-od-id="step-back" aria-label="Previous step" disabled>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 6 10l6 6"/></svg>
+          </button>
+          <div class="rail" id="rail" aria-hidden="true"></div>
+          <span class="count" id="count">01 / 07</span>
+        </div>
+
+        <div class="ob" id="ob">
+
+          <!-- 1 ─ THE LOOP -->
+          <section class="step" data-od-id="ob-1-loop" aria-label="Step 1 of 7">
+            <p class="eyebrow">Quit Smoke</p>
+            <h1 class="t-title" data-od-id="ob-1-title">You want to quit. Cravings make it hard.</h1>
+            <p class="prose" data-od-id="ob-1-body">Sound familiar? Quitting is not really about willpower. It is about what you do in the few minutes after a craving shows up. You can plan that part.</p>
+            <figure class="fig" data-od-id="ob-1-figure" style="margin-inline:0;">
+              <div class="loop">
+                <svg class="loop__ring" viewBox="0 0 240 240" fill="none" stroke="currentColor" aria-hidden="true">
+                  <g transform="rotate(45 120 120)">
+                    <g stroke-width="1.2" opacity=".42">
+                      <path d="M170 33.4A100 100 0 0 1 220 120" />
+                      <path d="M206.6 170A100 100 0 0 1 120 220" />
+                      <path d="M70 206.6A100 100 0 0 1 20 120" />
+                      <path d="M33.4 70A100 100 0 0 1 120 20" />
+                    </g>
+                    <g fill="currentColor" stroke="none" opacity=".7">
+                      <path d="M220 129 212 116 228 116Z" />
+                      <path d="M108 220 120 213 120 227Z" />
+                      <path d="M20 108 13 120 27 120Z" />
+                      <path d="M132 20 120 13 120 27Z" />
+                    </g>
+                  </g>
+                </svg>
+                <span class="loop__node loop__node--n" data-od-id="ob-1-node-quit"><b>01</b>Want to quit</span>
+                <span class="loop__node loop__node--e" data-od-id="ob-1-node-craving"><b>02</b>Craving hits</span>
+                <span class="loop__node loop__node--s" data-od-id="ob-1-node-smoke"><b>03</b>Smoke</span>
+                <span class="loop__node loop__node--w" data-od-id="ob-1-node-regret"><b>04</b>Regret</span>
+                <span class="loop__hub">Round<br />and round</span>
+              </div>
+              <figcaption data-od-id="ob-1-caption">The same four steps, in the same order. The loop is why quitting is hard — and why it can be planned for.</figcaption>
+            </figure>
+          </section>
+
+          <!-- 2 ─ THE CRAVING -->
+          <section class="step" data-od-id="ob-2-craving" aria-label="Step 2 of 7">
+            <p class="eyebrow">The craving</p>
+            <h1 class="t-title" data-od-id="ob-2-title">A craving feels endless. It isn't.</h1>
+            <p class="prose" data-od-id="ob-2-body">Most cravings fade in a few minutes. You do not need more willpower. You need something to do with your body until the craving is gone.</p>
+            <figure class="fig curve" style="margin-inline:0;" data-od-id="ob-2-figure">
+              <div class="curve__plot">
+                <svg viewBox="0 0 300 128" role="img" aria-label="A curve that rises to a peak marked Craving, then falls back down to the line marked Gone. The whole curve takes a few minutes.">
+                  <path class="curve__base" d="M8 104H292" />
+                  <path class="curve__line" pathLength="100" d="M8 104C56 104 74 22 150 22s94 82 142 82" />
+                  <circle class="curve__halo" cx="150" cy="22" r="9" />
+                  <circle class="curve__peak" cx="150" cy="22" r="3.5" />
+                </svg>
+                <span class="curve__tag curve__tag--peak">Craving</span>
+                <span class="curve__tag curve__tag--end">Gone</span>
+              </div>
+              <p class="curve__span" data-od-id="ob-2-span">A few minutes</p>
+              <figcaption data-od-id="ob-2-caption">The peak is the hard part, and it passes quickest. After that the curve does the work on its own.</figcaption>
+            </figure>
+            <div class="savings" style="margin-top:var(--space-6);" data-od-id="ob-2-figures">
+              <div><b>Peak</b><span>Where the urge is strongest</span></div>
+              <div><b>Fade</b><span>Where it lets go by itself</span></div>
+            </div>
+          </section>
+
+          <!-- 3 ─ CRAVING ESCAPE -->
+          <section class="step" data-od-id="ob-3-escape" aria-label="Step 3 of 7">
+            <p class="eyebrow">Tool one · Craving Escape</p>
+            <h1 class="t-title" data-od-id="ob-3-title">Sitting still with the urge is what fails.</h1>
+            <p class="prose" data-od-id="ob-3-body">A craving is at its worst when you just sit with it. Move instead. Start moving while it is at its peak, and keep going until it fades.</p>
+            <div class="tri" data-od-id="ob-3-method">
+              <div class="tri__c" data-od-id="ob-3-walk">
+                <svg class="tri__i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13" cy="4.6" r="1.7" /><path d="M11 21l1.6-5.4-2.6-2.4.8-4.4 3.4 1.6 2.2 2.6M9.8 8.8 6.6 10.4M12.6 15.6l3.2 1.9 1.2 3.5" /></svg>
+                <p class="tri__t">Walk</p>
+                <p class="tri__d">Get up and move while it is at its peak.</p>
+              </div>
+              <div class="tri__c" data-od-id="ob-3-breathe">
+                <svg class="tri__i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h9a3 3 0 1 0-3-3M3 12h14a3 3 0 1 1-3 3M3 16h7" /></svg>
+                <p class="tri__t">Breathe</p>
+                <p class="tri__d">Slow breaths while it is fading.</p>
+              </div>
+              <div class="tri__c" data-od-id="ob-3-move-on">
+                <svg class="tri__i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12h15M13.5 6l6 6-6 6" /></svg>
+                <p class="tri__t">Move on</p>
+                <p class="tri__d">It clears. You did not smoke.</p>
+              </div>
+            </div>
+            <p class="prose" style="margin-top:var(--space-5);font-size:13px;" data-od-id="ob-3-note">Optional. Craving Escape walks you through the peak and logs the moment as smoke-free.</p>
+          </section>
+
+          <!-- 4 ─ TIMER -->
+          <section class="step" data-od-id="ob-4-timer" aria-label="Step 4 of 7">
+            <p class="eyebrow">Tool two · Smoke-Free Timer</p>
+            <h1 class="t-title" data-od-id="ob-4-title">The timer grows. Then it runs without stopping.</h1>
+            <div class="rule-line" data-od-id="ob-4-rule">Timer running → I don't smoke.</div>
+            <p class="prose" style="margin-top:16px;" data-od-id="ob-4-body">Each day the timer holds for three hours longer than the day before. After Day 7 it keeps running for the length of your plan. You choose the hours it runs, so it covers the times you usually smoke.</p>
+            <figure class="fig ramp" style="margin-inline:0;" data-od-id="ob-4-ramp">
+              <div class="ramp__track">
+                <div class="ramp__col is-start"><div class="ramp__fill" style="height:14.3%"></div></div>
+                <div class="ramp__col"><div class="ramp__fill" style="height:28.6%"></div></div>
+                <div class="ramp__col"><div class="ramp__fill" style="height:42.9%"></div></div>
+                <div class="ramp__col"><div class="ramp__fill" style="height:57.1%"></div></div>
+                <div class="ramp__col"><div class="ramp__fill" style="height:71.4%"></div></div>
+                <div class="ramp__col"><div class="ramp__fill" style="height:85.7%"></div></div>
+                <div class="ramp__col is-end"><div class="ramp__fill" style="height:100%"></div></div>
+                <div class="ramp__col is-cont"><div class="ramp__fill" style="height:100%"></div></div>
+              </div>
+              <div class="ramp__labels">
+                <div class="ramp__lab">3H</div><div class="ramp__lab">6H</div><div class="ramp__lab">9H</div>
+                <div class="ramp__lab">12H</div><div class="ramp__lab">15H</div><div class="ramp__lab">18H</div><div class="ramp__lab">21H</div>
+                <div class="ramp__lab is-cont">—</div>
+              </div>
+              <div class="ramp__days">
+                <div class="ramp__day">01</div><div class="ramp__day">02</div><div class="ramp__day">03</div>
+                <div class="ramp__day">04</div><div class="ramp__day">05</div><div class="ramp__day">06</div>
+                <div class="ramp__day is-key">07</div>
+                <div class="ramp__day is-cont" data-od-id="ob-4-continue">3M</div>
+              </div>
+              <figcaption data-od-id="ob-4-caption">The seven days are the whole ramp, and Day 07 is the tallest of the seven. The eighth column is titled with the plan — 3M here — and rises past all of them because from there on the timer runs without stopping.</figcaption>
+            </figure>
+
+            <div class="slots" data-od-id="ob-4-slots">
+              <p class="slots__t">Your slots</p>
+              <p class="slots__d" data-od-id="ob-4-slots-d">Pick the hours you smoke most, or the hours cravings hit hardest. The timer runs in the slots you choose and stays quiet outside them.</p>
+              <div class="slots__g" role="group" aria-label="Timer slots" data-od-id="ob-4-slot-grid">
+                <button type="button" data-slot="7am" aria-pressed="true">7 AM</button>
+                <button type="button" data-slot="9am" aria-pressed="false">9 AM</button>
+                <button type="button" data-slot="12pm" aria-pressed="true">12 PM</button>
+                <button type="button" data-slot="3pm" aria-pressed="false">3 PM</button>
+                <button type="button" data-slot="6pm" aria-pressed="true">6 PM</button>
+                <button type="button" data-slot="9pm" aria-pressed="false">9 PM</button>
+              </div>
+              <p class="slots__n" data-od-id="ob-4-slot-note">3 slots picked · about 7 hours a day covered</p>
+            </div>
+          </section>
+
+          <!-- 5 ─ EVERYTHING ELSE -->
+          <section class="step" data-od-id="ob-5-support" aria-label="Step 5 of 7">
+            <p class="eyebrow">Everything else</p>
+            <h1 class="t-title" data-od-id="ob-5-title">Four things that stay switched on.</h1>
+            <p class="prose" data-od-id="ob-5-body">They run in the background. No willpower needed. They just keep your plan in view while a craving passes.</p>
+            <div class="rows" style="margin-top:20px;">
+              <div class="row-i" data-od-id="ob-5-row-zones">
+                <div class="row-i__b"><p class="row-i__t">Trigger Zones</p><p class="row-i__d">A nudge when you walk into a place where you normally buy or smoke.</p></div>
+                <svg class="row-i__mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>
+              </div>
+              <div class="row-i" data-od-id="ob-5-row-widgets">
+                <div class="row-i__b"><p class="row-i__t">Home &amp; Lock Screen widgets</p><p class="row-i__d">Craving Escape one swipe away, without opening the app. Three days on free, then ad-supported, and ad-free on the plan.</p></div>
+                <svg class="row-i__mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="5" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="10" width="8" height="11" rx="1.5"/></svg>
+              </div>
+              <div class="row-i" data-od-id="ob-5-row-reminders">
+                <div class="row-i__b"><p class="row-i__t">Persistent notifications</p><p class="row-i__d">A quiet, always-there reminder of the streak you have built.</p></div>
+                <svg class="row-i__mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M18 15V10a6 6 0 1 0-12 0v5l-2 3h16l-2-3Z"/><path d="M10 21h4"/></svg>
+              </div>
+              <div class="row-i" data-od-id="ob-5-row-progress">
+                <div class="row-i__b"><p class="row-i__t">Progress you can read</p><p class="row-i__d">Smoke-free days, cravings cleared, steps walked, money saved.</p></div>
+                <svg class="row-i__mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+              </div>
+            </div>
+          </section>
+
+          <!-- 6 ─ YOUR NUMBERS -->
+          <section class="step" data-od-id="ob-6-numbers" aria-label="Step 6 of 7">
+            <p class="eyebrow">Your numbers</p>
+            <h1 class="t-title" data-od-id="ob-6-title">What smoking costs you.</h1>
+            <p class="prose" data-od-id="ob-6-body">Two numbers turn the streak into something you can watch. Change them any time in Settings.</p>
+
+            <div class="field">
+              <p class="field__label" id="lbl-cpd">Cigarettes a day</p>
+              <div class="stepper" data-od-id="field-cpd">
+                <button class="stepper__btn" id="cpd-down" aria-label="One fewer cigarette a day"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 9h12"/></svg></button>
+                <p class="stepper__val"><span id="cpd">20</span><small>a day</small></p>
+                <button class="stepper__btn" id="cpd-up" aria-label="One more cigarette a day"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M9 3v12M3 9h12"/></svg></button>
+              </div>
+            </div>
+
+            <div class="field">
+              <p class="field__label" id="lbl-price">Price of a pack</p>
+              <div class="money" data-od-id="field-price">
+                <span class="money__sym" id="sym">$</span>
+                <input id="price" type="text" inputmode="decimal" value="12.00" aria-labelledby="lbl-price" />
+              </div>
+              <div class="seg" data-od-id="field-currency" role="group" aria-label="Currency">
+                <button type="button" data-cur="USD" aria-pressed="true">USD $</button>
+                <button type="button" data-cur="EUR" aria-pressed="false">EUR €</button>
+                <button type="button" data-cur="GBP" aria-pressed="false">GBP £</button>
+                <button type="button" data-cur="INR" aria-pressed="false">INR ₹</button>
+              </div>
+            </div>
+
+            <div class="savings" data-od-id="savings-strip">
+              <div><b id="save-day">$12.00</b><span>per day</span></div>
+              <div><b id="save-month">$360.00</b><span>per month</span></div>
+              <div><b id="save-year">$4,380.00</b><span>per year</span></div>
+            </div>
+            <p class="prose" style="margin-top:12px;font-size:13px;">Counted from the day you start, at the pack price you entered. It grows as the days add up.</p>
+          </section>
+
+          <!-- 7 ─ PLAN -->
+          <section class="step" data-od-id="ob-7-plan" aria-label="Step 7 of 7">
+            <p class="eyebrow">Your plan</p>
+            <h1 class="t-title" data-od-id="ob-7-title">Choose how long you are in this for.</h1>
+            <p class="prose" style="margin-top:10px;" data-od-id="ob-7-body">The timer grows three hours a day, up to 21 on Day 7, then runs non-stop for the length of your plan. You pick the hours it runs.</p>
+            <div class="plan" role="group" aria-label="Plan length" data-od-id="plan-picker">
+              <button type="button" data-plan="1m" aria-pressed="false" data-od-id="plan-1m">
+                <span class="plan__tick" aria-hidden="true"></span>
+                <span class="plan__b"><span class="plan__t">1 month</span></span>
+                <span class="plan__p">$9.99</span>
+              </button>
+              <button type="button" data-plan="3m" aria-pressed="true" data-od-id="plan-3m">
+                <span class="plan__tick" aria-hidden="true"></span>
+                <span class="plan__b"><span class="plan__t">3 months <span class="tag">Most chosen</span></span></span>
+                <span class="plan__p">$19.99</span>
+              </button>
+            </div>
+            <div class="sec" data-od-id="subscribe-adds">
+              <p class="sec__l">What the plan adds</p>
+              <div class="card adds" style="padding:16px;" data-od-id="plan-adds">
+                <div data-od-id="subscribe-add-1">
+                  <p class="adds__k">Smoke-Free Timer</p>
+                  <p class="adds__l adds__l--f"><span class="adds__tag">Free</span>Locked, no trial</p>
+                  <p class="adds__l adds__l--p"><span class="adds__tag">Plan</span>Runs for the length of your plan</p>
+                </div>
+                <div data-od-id="subscribe-add-2">
+                  <p class="adds__k">Trigger Zones</p>
+                  <p class="adds__l adds__l--f"><span class="adds__tag">Free</span>One zone</p>
+                  <p class="adds__l adds__l--p"><span class="adds__tag">Plan</span>Unlimited zones</p>
+                </div>
+                <div data-od-id="subscribe-add-3">
+                  <p class="adds__k">Home &amp; Lock Screen widgets</p>
+                  <p class="adds__l adds__l--f"><span class="adds__tag">Free</span>Three days, then ad-supported</p>
+                  <p class="adds__l adds__l--p"><span class="adds__tag">Plan</span>Ad-free, always on</p>
+                </div>
+              </div>
+            </div>
+            <p class="prose" style="margin-top:20px;font-size:13.5px;" data-od-id="plan-reset">No resets, ever. If you slip, the timer keeps running and the streak keeps its count.</p>
+          </section>
+        </div>
+
+        <div class="ob-foot" data-od-id="step-foot">
+          <button class="cta cta--stack" id="next" data-od-id="cta-continue">
+            <span id="nextLabel">Continue</span>
+            <span class="cta__sub" id="nextSave" data-od-id="cta-plan-savings" hidden></span>
+          </button>
+          <a class="cta cta--ghost" id="skip" href="mobile-app.html" data-od-id="cta-continue-free" style="display:none;">Continue free</a>
+        </div>
+      </div>
+      <div class="device__glare"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const root = document.documentElement;
+  const STEPS = 7;
+
+  /* ── theme ─────────────────────────────────────────────────────── */
+  const applyTheme = t => {
+    root.dataset.theme = t;
+    document.getElementById('theme').textContent = t === 'dark' ? 'Light' : 'Dark';
+    try { localStorage.setItem('qs.theme', t); } catch (e) {}
+  };
+  let stored = 'dark';
+  try { stored = localStorage.getItem('qs.theme') || 'dark'; } catch (e) {}
+  applyTheme(stored);
+  document.getElementById('theme').addEventListener('click', () => {
+    buzz(8);
+    applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark');
+  });
+
+  /* ── step 4: slot picker ───────────────────────────────────────── */
+  (() => {
+    const grid = document.querySelector('[data-od-id="ob-4-slot-grid"]');
+    if (!grid) return;
+    const note = document.querySelector('[data-od-id="ob-4-slot-note"]');
+    const HOURS = { '7am': 2, '9am': 2, '12pm': 2, '3pm': 2, '6pm': 3, '9pm': 3 };
+    const persist = slots => {
+      try {
+        const cur = JSON.parse(localStorage.getItem('qs.state') || '{}');
+        cur.slots = slots;
+        localStorage.setItem('qs.state', JSON.stringify(cur));
+      } catch (e) {}
+    };
+    const onSlots = () => [...grid.querySelectorAll('[data-slot][aria-pressed="true"]')].map(b => b.dataset.slot);
+    const paintSlots = () => {
+      const on = onSlots();
+      const total = on.reduce((a, k) => a + (HOURS[k] || 0), 0);
+      note.textContent = on.length
+        ? on.length + (on.length === 1 ? ' slot picked' : ' slots picked') + ' · about ' + total + ' hours a day covered'
+        : 'No slots picked yet';
+    };
+    grid.addEventListener('click', e => {
+      const b = e.target.closest('[data-slot]');
+      if (!b) return;
+      b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'));
+      buzz(8); paintSlots(); persist(onSlots());
+    });
+    paintSlots();
+  })();
+
+  /* ── steps ─────────────────────────────────────────────────────── */
+  const rail = document.getElementById('rail');
+  const count = document.getElementById('count');
+  const steps = [...document.querySelectorAll('.step')];
+  const back = document.getElementById('back');
+  const next = document.getElementById('next');
+  const skip = document.getElementById('skip');
+  const nextLabel = document.getElementById('nextLabel');
+  const CTA = ['Yes, that’s me', 'What do I do?', 'Keep me smoke-free', 'What else is there?', 'What will I save?', 'Choose my plan', 'Start my plan'];
+
+  for (let i = 0; i < STEPS; i++) {
+    const s = document.createElement('span');
+    if (i === 0) s.className = 'is-start';
+    rail.appendChild(s);
+  }
+  const segs = [...rail.children];
+
+  let n = 0;
+  try { n = Math.min(Math.max(parseInt(localStorage.getItem('qs.obStep') || '0', 10) || 0, 0), STEPS - 1); } catch (e) {}
+
+  const paint = () => {
+    steps.forEach((s, i) => s.classList.toggle('is-on', i === n));
+    segs.forEach((s, i) => {
+      s.className = i < n ? 'is-done' : i === n ? 'is-now' : '';
+    });
+    count.textContent = String(n + 1).padStart(2, '0') + ' / 0' + STEPS;
+    back.disabled = n === 0;
+    nextLabel.textContent = CTA[n];
+    paintSave();
+    /* the plan is the last step, so it carries the only fork: start the plan and
+       land in the app's Subscribe screen, or keep the free tier and go to Home.
+       Continue free is the ghost on that step and is fixed in the markup. */
+    skip.style.display = n === STEPS - 1 ? 'flex' : 'none';
+    document.getElementById('ob').scrollTop = 0;
+    try { localStorage.setItem('qs.obStep', String(n)); } catch (e) {}
+  };
+
+  const go = d => {
+    const t = Math.min(Math.max(n + d, 0), STEPS - 1);
+    if (t === n) return;
+    n = t; buzz(10); paint();
+  };
+  /* Home shows its subscription card only for free accounts, and the plan is
+     bought with an account, so the tail writes both: which one this is, and
+     who it belongs to. The app reads the same keys and boots already decided. */  const setSubs = v => {
+    try {
+      const cur = JSON.parse(localStorage.getItem('qs.state') || '{}');
+      cur.subs = v;
+      localStorage.setItem('qs.state', JSON.stringify(cur));
+    } catch (e) {}
+  };
+  const setAcct = v => {
+    try {
+      const cur = JSON.parse(localStorage.getItem('qs.state') || '{}');
+      cur.acct = v;
+      localStorage.setItem('qs.state', JSON.stringify(cur));
+    } catch (e) {}
+  };
+  /* the app restores whichever view it was last on, so the handover has to name
+     it: starting the plan lands on Subscribe, staying free lands on Home */
+  const setView = v => { try { localStorage.setItem('qs.view', v); } catch (e) {} };
+  const setPlan = v => {
+    try {
+      const cur = JSON.parse(localStorage.getItem('qs.state') || '{}');
+      cur.plan = v;
+      localStorage.setItem('qs.state', JSON.stringify(cur));
+    } catch (e) {}
+  };
+  /* the plan itself is never granted here. Onboarding hands over signed out, and
+     the app's Subscribe screen is the one place the plan is bought, so the
+     account gate is the app's and not a step the walkthrough can skip */
+  const leave = (view) => { setAcct(null); setSubs(false); setView(view); location.href = 'mobile-app.html'; };
+  next.addEventListener('click', () => {
+    if (n === STEPS - 1) { setPlan(plan); buzz([12, 40, 18]); leave('subscribe'); return; }
+    go(1);
+  });
+  back.addEventListener('click', () => go(-1));
+  /* Continue free is the whole free path: no account, no plan, straight to Home.
+     leave() navigates itself, so the anchor's own hop is suppressed */
+  skip.addEventListener('click', e => {
+    e.preventDefault();
+    buzz(6); leave('home');
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') go(1);
+    if (e.key === 'ArrowLeft') go(-1);
+  });
+
+  let x0 = null, y0 = null;
+  document.getElementById('ob').addEventListener('touchstart', e => {
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
+  }, { passive: true });
+  document.getElementById('ob').addEventListener('touchend', e => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.6) go(dx < 0 ? 1 : -1);
+    x0 = null;
+  }, { passive: true });
+
+  /* ── step 7: habit + savings ───────────────────────────────────── */
+  const cpd = document.getElementById('cpd');
+  const price = document.getElementById('price');
+  const sym = document.getElementById('sym');
+  const SYM = { USD: '$', EUR: '€', GBP: '£', INR: '₹' };
+  /* rupees are grouped the Indian way — 1,20,000 rather than 120,000 */
+  const LOCALE = { INR: 'en-IN' };
+  const fmt = n => SYM[currency] + n.toLocaleString(LOCALE[currency] || 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  let currency = 'USD';
+
+  function calc() {
+    const c = Math.max(0, parseInt(cpd.textContent, 10) || 0);
+    const p = Math.max(0, parseFloat(price.value.replace(/[^0-9.]/g, '')) || 0);
+    const day = (c / 20) * p;
+    document.getElementById('save-day').textContent = fmt(day);
+    document.getElementById('save-month').textContent = fmt(day * 30);
+    document.getElementById('save-year').textContent = fmt(day * 365);
+  }
+  const bump = d => { cpd.textContent = Math.min(Math.max((parseInt(cpd.textContent, 10) || 0) + d, 1), 60); calc(); buzz(8); };
+  document.getElementById('cpd-up').addEventListener('click', () => bump(1));
+  document.getElementById('cpd-down').addEventListener('click', () => bump(-1));
+  price.addEventListener('input', calc);
+  document.querySelectorAll('[data-cur]').forEach(b => b.addEventListener('click', () => {
+    currency = b.dataset.cur;
+    document.querySelectorAll('[data-cur]').forEach(o => o.setAttribute('aria-pressed', String(o === b)));
+    sym.textContent = SYM[currency];
+    calc(); buzz(8);
+  }));
+  calc();
+
+  /* ── step 7: plan ──────────────────────────────────────────────── */
+  let plan = '3m';
+  /* the plan choice lives on the next step, so the button that hands you off to it
+     carries the figure the savings step already proved: the same day rate, times
+     the plan currently selected (3M until the picker says otherwise). It shows on
+     that step alone, and stays hidden when the habit inputs make a saving of
+     nothing. paint() calls this on every step change and the picker calls it
+     again, so the two never disagree. */
+  const nextSave = document.getElementById('nextSave');
+  function paintSave() {
+    const c = Math.max(0, parseInt(cpd.textContent, 10) || 0);
+    const p = Math.max(0, parseFloat(price.value.replace(/[^0-9.]/g, '')) || 0);
+    const months = plan === '1m' ? 1 : 3;
+    const keeps = Math.round((c / 20) * p * 30 * months);
+    nextSave.hidden = !(n === STEPS - 2 && keeps > 0);
+    if (!nextSave.hidden) nextSave.textContent = 'Save ' + SYM[currency] +
+      keeps.toLocaleString(LOCALE[currency] || 'en-US') + ' in ' + months + (months === 1 ? ' month' : ' months');
+  }
+  document.querySelectorAll('[data-plan]').forEach(b => b.addEventListener('click', () => {
+    plan = b.dataset.plan;
+    document.querySelectorAll('[data-plan]').forEach(o => o.setAttribute('aria-pressed', String(o === b)));
+    CTA[STEPS - 1] = plan === '3m' ? 'Start 3-Month Plan' : 'Start 1-Month Plan';
+    /* paint() writes into the label span, so this must too — assigning to the
+       button's textContent would drop the span and strand paint() */
+    nextLabel.textContent = CTA[STEPS - 1];
+    paintSave();
+    buzz(10);
+  }));
+
+  /* ── misc ──────────────────────────────────────────────────────── */
+  function buzz(ms) { if (navigator.vibrate) { try { navigator.vibrate(ms); } catch (e) {} } }
+  const tick = () => {
+    const d = new Date();
+    document.getElementById('clock').textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0');
+  };
+  tick(); setInterval(tick, 20000);
+
+  paint();
+})();
+</script>
+</body>
+</html>

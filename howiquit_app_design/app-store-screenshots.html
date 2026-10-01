@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quit Smoke · App Store screenshots · 1320 × 2868</title>
+<style>
+  /* ── SpaceX direction, carried over from the Play set ── */
+  @font-face{font-family:"Saira";src:url("assets/fonts/saira-var.woff2") format("woff2");font-weight:100 800;font-display:swap;font-style:normal}
+  @font-face{font-family:"Saira Cond";src:url("assets/fonts/saira-cond-700.woff2") format("woff2");font-weight:700;font-display:swap;font-style:normal}
+
+  :root{
+    /* palette aliased from the design system's dark primitives */
+    --ink:#000;            /* --d-bg */
+    --fg:#f0f0fa;          /* --d-fg, also --d-accent */
+    --muted:rgba(240,240,250,.7);   /* --d-muted */
+    --line:rgba(240,240,250,.22);   /* hairline, between --d-border-soft and --d-border */
+    --hair:rgba(240,240,250,.16);
+    --hair-2:rgba(240,240,250,.3);
+    --sans:"Saira","Saira Cond",system-ui,sans-serif;
+    --cond:"Saira Cond","Saira",system-ui,sans-serif;
+
+    /* App Store 6.7" portrait master: 1320 × 2868, authored at export pixels */
+    --w:1320px;--h:2868px;--pad:96px;
+    --k-size:24px;--h-size:74px;--s-size:30px;--gap:28px;
+    --sub-max:1060px;--ph-gap:76px;
+    --k:2.4;                  /* 390 device px → 936 export px */
+  }
+
+  *{box-sizing:border-box}
+  html{background:#07080a}
+  body{margin:0;background:#07080a;color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+
+  .shell{max-width:1420px;margin:0 auto;padding:64px 24px 120px}
+  .shell__k{font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+  .shell__h{font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:.01em;font-size:38px;margin:16px 0 0}
+  .shell__p{color:var(--muted);font-size:15px;line-height:1.6;max-width:62ch;margin:14px 0 0}
+  .shell__m{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .shell__m span{border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .bar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:40px 0 34px;padding-top:28px;border-top:1px solid var(--line)}
+  .bar button{font:inherit;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--fg);
+    background:transparent;border:1px solid var(--line);border-radius:999px;padding:10px 18px;cursor:pointer;min-height:44px}
+  .bar button:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
+  .bar button[aria-pressed="true"]{border-color:var(--fg)}
+  .bar p{margin:0;font-size:13px;color:var(--muted)}
+  .stack{display:flex;flex-direction:column;gap:40px}
+  .stack__l{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+
+  /* ── the exported frame ── */
+  .frame{width:var(--w);height:var(--h);-webkit-print-color-adjust:exact;print-color-adjust:exact;background:var(--ink);color:var(--fg);
+    position:relative;overflow:hidden;display:flex;flex-direction:column;padding:var(--pad);margin:0}
+
+  .cap{display:flex;flex-direction:column;gap:var(--gap);flex:none}
+  .kicker{margin:0;font-size:var(--k-size);font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+  .hl{margin:0;font-family:var(--cond);font-weight:700;font-size:var(--h-size);line-height:1.02;letter-spacing:.005em;text-transform:uppercase}
+  .sub{margin:0;font-size:var(--s-size);line-height:1.45;color:var(--muted);max-width:var(--sub-max);font-weight:400}
+
+  .ph{flex:1;min-height:0;display:flex;justify-content:center;align-items:center;margin-top:var(--ph-gap)}
+  .phone{width:calc(390px * var(--k));height:calc(844px * var(--k));
+    border:2px solid var(--line);border-radius:84px;overflow:hidden;position:relative;background:var(--ink)}
+  .phone::after{content:"";position:absolute;top:calc(20px * var(--k));left:50%;transform:translateX(-50%);
+    width:calc(120px * var(--k));height:calc(30px * var(--k));border-radius:0 0 999px 999px;background:#000;z-index:6}
+  .scr{width:390px;height:844px;transform:scale(var(--k));transform-origin:0 0;position:relative;
+    background:var(--ink);display:flex;flex-direction:column;overflow:hidden}
+
+  /* bottom brand rail, fills the extra App Store height */
+  .brand{flex:none;margin-top:44px;padding-top:26px;border-top:1px solid var(--line);
+    display:flex;align-items:baseline;justify-content:space-between;gap:24px}
+  .brand__m{font-family:var(--cond);font-weight:700;font-size:26px;letter-spacing:.18em;text-transform:uppercase}
+  .brand__t{font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:right}
+
+  /* ── device screen, in real 390 × 844 device pixels ── */
+  .status{display:flex;align-items:center;justify-content:space-between;padding:15px 26px 0;
+    font-size:12px;letter-spacing:.04em;flex:none}
+  .status__i{display:flex;align-items:center;gap:6px}
+  .view{flex:1;min-height:0;display:flex;flex-direction:column}
+  .topbar{display:flex;align-items:center;gap:10px;padding:17px 20px 12px;flex:none}
+  .topbar__t{flex:1;min-width:0;font-size:13px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+  .topbar__x{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+  .back{width:30px;height:30px;border:1px solid var(--line);border-radius:999px;display:grid;place-items:center;flex:none}
+  .body{flex:1;min-height:0;overflow:hidden;padding:0 20px;display:flex;flex-direction:column;gap:18px}
+  .card{border:1px solid var(--line);border-radius:16px;padding:17px}
+  .sec__l{margin:0 0 10px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .cue{margin:0;font-size:13px;line-height:1.55;color:var(--muted)}
+  .h1{margin:6px 0 0;font-family:var(--cond);font-weight:700;font-size:30px;line-height:1.05;text-transform:uppercase;letter-spacing:.005em}
+  .prose{margin:0;font-size:12.5px;line-height:1.55;color:var(--muted)}
+
+  .hero__top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--fg);flex:none}
+  .digits{margin:16px 0 18px;font-family:var(--cond);font-weight:700;font-size:66px;line-height:1;
+    letter-spacing:-.005em;font-variant-numeric:tabular-nums}
+  .meter{height:2px;background:var(--line);overflow:hidden}
+  .meter i{display:block;height:100%;width:38%;background:var(--fg)}
+  .hero__foot{display:flex;justify-content:space-between;margin-top:12px;font-size:11.5px;color:var(--muted)}
+  .hero__week{margin-top:20px}
+  .hero__weekl{margin:0 0 10px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .rail7{display:flex;gap:6px;align-items:flex-end;height:38px}
+  .rail7 i{flex:1;background:var(--hair)}
+  .rail7 i.on{background:var(--fg)}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .stat__v{margin:0;font-family:var(--cond);font-weight:700;font-size:26px;line-height:1}
+  .stat__l{margin:6px 0 0;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+
+  .rows{display:flex;flex-direction:column}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:0}
+  .row__t{margin:0;font-size:13.5px}
+  .row__d{margin:4px 0 0;font-size:11.5px;color:var(--muted)}
+  .row__r{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+
+  .seg{display:flex;gap:8px}
+  .seg button{flex:1;font:inherit;font-size:12px;letter-spacing:.06em;color:var(--muted);
+    background:transparent;border:1px solid var(--line);border-radius:999px;padding:9px 0;cursor:default}
+  .seg button[aria-pressed="true"]{color:var(--ink);background:var(--fg);border-color:var(--fg)}
+
+  .ring-mid{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:5px;text-align:center}
+  .ring-num{margin:0;font-family:var(--cond);font-weight:700;font-size:40px;line-height:1;font-variant-numeric:tabular-nums}
+  .ring-sub{margin:0;font-size:12px;color:var(--muted)}
+
+  .chart{display:flex;align-items:flex-end;gap:9px;height:96px;margin-top:4px}
+  .chart i{flex:1;background:var(--hair);display:block}
+  .chart i.on{background:var(--fg)}
+  .chartl{display:flex;gap:9px;margin-top:9px}
+  .chartl span{flex:1;text-align:center;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+  .foot{flex:none;padding:16px 20px 22px;display:flex;flex-direction:column;gap:9px}
+  .cta{font:inherit;font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-align:center;
+    color:var(--ink);background:var(--fg);border:1px solid var(--fg);border-radius:999px;padding:14px 18px;cursor:default}
+  .cta--ghost{color:var(--fg);background:transparent}
+
+  .slots{display:flex;flex-wrap:wrap;gap:7px}
+  .slots span{border:1px solid var(--line);border-radius:999px;padding:7px 12px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .sw{width:34px;height:20px;border:1px solid var(--line);border-radius:999px;display:flex;align-items:center;padding:2px;flex:none}
+  .sw i{width:14px;height:14px;border-radius:50%;background:var(--hair-2)}
+  .sw[aria-checked="true"]{border-color:var(--fg);justify-content:flex-end}
+  .sw[aria-checked="true"] i{background:var(--fg)}
+
+  .tabbar{flex:none;display:flex;align-items:center;justify-content:space-between;gap:4px;
+    border-top:1px solid var(--line);padding:11px 14px 16px}
+  .tab{display:grid;justify-items:center;gap:5px;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+  .tab--craving{color:var(--ink);background:var(--fg);border-radius:999px;padding:11px 13px;gap:5px}
+
+  .stair{display:block;width:100%;height:auto}
+  .stairl{display:flex;gap:9px;margin-top:8px}
+  .stairl span{flex:1;text-align:center;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+  .frame[data-grid="on"]::after{content:"";position:absolute;inset:0;z-index:9;pointer-events:none;
+    background:linear-gradient(to right,var(--hair) 1px,transparent 1px) 0 0/110px 100%,
+               linear-gradient(to bottom,var(--hair) 1px,transparent 1px) 0 0/100% 200px;
+    outline:2px dashed var(--hair-2);outline-offset:-2px}
+
+  @media print{
+    html,body{background:#f0f0fa}
+    .shell__k,.shell__p,.shell__m,.bar,.stack__l{display:none}
+    .shell{padding:0;max-width:none}
+    .stack{gap:0}
+    .frame{page-break-after:always;break-after:page}
+    .frame:last-child{page-break-after:auto;break-after:auto}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <p class="shell__k">Store assets</p>
+  <h1 class="shell__h">App Store screenshots</h1>
+  <p class="shell__p">The same six frames at the App Store 6.7&Prime; portrait master size, 1320 × 2868.
+    One screen, one line of copy. Nothing is claimed here that the app does not show on Day 3.</p>
+  <div class="shell__m">
+    <span>6 frames</span><span>1320 × 2868</span><span>6.7&Prime; display</span>
+    <span>Capture at 100% zoom</span><span>Flat background, no device frame in the crop</span>
+  </div>
+
+  <div class="bar">
+    <button type="button" id="gridBtn" data-od-id="toggle-grid" aria-pressed="false">Safe-area grid</button>
+    <button type="button" id="printBtn" data-od-id="print-frames">Print / PDF frames</button>
+    <p>The taller canvas carries a hairline brand rail at the bottom. Toggle the grid to check margins before you capture.</p>
+  </div>
+
+  <div class="stack">
+
+    <!-- 1 · HOME -->
+    <div>
+      <p class="stack__l">01 · Home</p>
+      <figure class="frame" data-od-id="shot-01-home" role="img"
+        aria-label="App Store screenshot 1 of 6. Quit Smoke Home: a running timer at 09:00:00 on a nine hour target, Day 3 of 7, with 3 smoke-free days, 4 cravings cleared, 2,100 steps walked and $36.00 saved. Caption: A timer that never stops.">
+        <div class="cap">
+          <p class="kicker">01 / 06 · Home</p>
+          <h2 class="hl">A timer that never stops</h2>
+          <p class="sub">One timer for the whole quit. Day 3 holds nine hours, and it runs only inside the hours you choose.</p>
+        </div>
+        <div class="ph" aria-hidden="true">
+          <div class="phone"><div class="scr">
+            <div class="status"><span>9:41</span><span class="status__i">
+              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4"/><rect x="4.5" y="5" width="3" height="6"/><rect x="9" y="2.5" width="3" height="8.5"/><rect x="13.5" y="0" width="3" height="11"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="15" height="8" rx="1.6" fill="currentColor"/></svg>
+            </span></div>
+            <div class="view">
+              <div class="topbar"><span class="topbar__t">Home</span><span class="topbar__x">Day 3 of 7</span></div>
+              <div class="body">
+                <div class="card">
+                  <div class="hero__top">
+                    <span class="eyebrow"><i class="dot"></i>Timer is running</span>
+                    <span class="eyebrow">9 hour target</span>
+                  </div>
+                  <p class="digits">09:00:00</p>
+                  <div class="meter"><i></i></div>
+                  <div class="hero__foot"><span>Remaining today</span><span>Elapsed 00:00</span></div>
+                  <div class="hero__week">
+                    <p class="hero__weekl">The seven days</p>
+                    <div class="rail7">
+                      <i style="height:14%"></i><i style="height:29%"></i><i class="on" style="height:43%"></i>
+                      <i style="height:57%"></i><i style="height:71%"></i><i style="height:86%"></i><i style="height:100%"></i>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <p class="sec__l">Your totals</p>
+                  <div class="card grid2">
+                    <div><p class="stat__v">3</p><p class="stat__l">Smoke-free days</p></div>
+                    <div><p class="stat__v">4</p><p class="stat__l">Cravings cleared</p></div>
+                    <div><p class="stat__v">2,100</p><p class="stat__l">Steps walked</p></div>
+                    <div><p class="stat__v">$36.00</p><p class="stat__l">Money saved</p></div>
+                  </div>
+                </div>
+              </div>
+              <nav class="tabbar">
+                <span class="tab"><svg width="19" height="19" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 10 5l6 6.5M6.5 10v8.5h7V10"/></svg>Home</span>
+                <span class="tab"><svg width="19" height="19" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 17.5h15M5.5 17.5V10M10 17.5V5.5M14.5 17.5v-5M19 17.5V8"/></svg>Plan</span>
+                <span class="tab tab--craving"><svg width="17" height="17" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 2.5 5 11.5h5l-1.5 8 8.5-9h-5Z"/></svg>Craving</span>
+                <span class="tab"><svg width="19" height="19" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 18.5 9 12l4 4 5.5-8"/></svg>Progress</span>
+                <span class="tab"><svg width="19" height="19" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4.2a1 1 0 0 1 1 0l.5 1.9 1.6.7 1.7-1a1 1 0 0 1 1.3.4l.9 1.5a1 1 0 0 1-.2 1.3l-1.5 1.2v1.6l1.5 1.2a1 1 0 0 1 .2 1.3l-.9 1.5a1 1 0 0 1-1.3.4l-1.7-1-1.6.7-.5 1.9a1 1 0 0 1-1 0l-.5-1.9-1.6-.7-1.7 1a1 1 0 0 1-1.3-.4l-.9-1.5a1 1 0 0 1 .2-1.3l1.5-1.2v-1.6L4.4 8.4a1 1 0 0 1-.2-1.3l.9-1.5a1 1 0 0 1 1.3-.4l1.7 1 1.6-.7Z"/></svg>Settings</span>
+              </nav>
+            </div>
+          </div></div>
+        </div>
+        <div class="brand">
+          <span class="brand__m">Quit Smoke</span>
+          <span class="brand__t">Smoke-Free Plan · Craving Escape · Trigger Zones</span>
+        </div>
+      </figure>
+    </div>
+
+    <!-- 2 · PLAN -->
+    <div>
+      <p class="stack__l">02 · Plan</p>
+      <figure class="frame" data-od-id="shot-02-plan" role="img"
+        aria-label="App Store screenshot 2 of 6. The Smoke-Free Plan screen: a seven step staircase from three hours on Day 1 to twenty-one hours on Day 7, then continuous for the length of the plan, with three slots saved. Caption: Each day holds longer.">
+        <div class="cap">
+          <p class="kicker">02 / 06 · Smoke-Free Plan</p>
+          <h2 class="hl">Each day holds longer</h2>
+          <p class="sub">Three hours on Day 1. Twenty-one on Day 7. After that it runs for the length of your plan.</p>
+        </div>
+        <div class="ph" aria-hidden="true">
+          <div class="phone"><div class="scr">
+            <div class="status"><span>9:41</span><span class="status__i">
+              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4"/><rect x="4.5" y="5" width="3" height="6"/><rect x="9" y="2.5" width="3" height="8.5"/><rect x="13.5" y="0" width="3" height="11"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="15" height="8" rx="1.6" fill="currentColor"/></svg>
+            </span></div>
+            <div class="view">
+              <div class="topbar"><span class="topbar__t">Smoke-Free Plan</span><span class="topbar__x">3 months</span></div>
+              <div class="body">
+                <div class="card">
+                  <p class="sec__l" style="margin-bottom:16px">The seven days</p>
+                  <svg class="stair" viewBox="0 0 350 128" role="img" aria-label="Day 1 to Day 7 grows from three hours to twenty-one hours">
+                    <line x1="0" y1="120" x2="350" y2="120" stroke="var(--line)"/>
+                    <g fill="var(--hair)">
+                      <rect x="6" y="101" width="36" height="19"/>
+                      <rect x="56" y="81" width="36" height="39"/>
+                    </g>
+                    <rect x="106" y="62" width="36" height="58" fill="#f0f0fa"/>
+                    <g fill="var(--hair)">
+                      <rect x="156" y="43" width="36" height="77"/>
+                      <rect x="206" y="24" width="36" height="96"/>
+                      <rect x="256" y="6" width="36" height="114"/>
+                    </g>
+                    <path d="M300 8h44" stroke="var(--hair-2)" stroke-width="2" stroke-dasharray="5 5" fill="none"/>
+                  </svg>
+                  <div class="stairl"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+                </div>
+                <div class="card" style="padding:4px 17px">
+                  <div class="rows">
+                    <div class="row"><span class="row__t">Day 1</span><span class="row__r">3 hours</span></div>
+                    <div class="row"><span class="row__t">Day 7</span><span class="row__r">21 hours</span></div>
+                    <div class="row"><span class="row__b"><span class="row__t">After Day 7</span><span class="row__d">No ceiling</span></span><span class="row__r">Runs on</span></div>
+                  </div>
+                </div>
+                <div>
+                  <p class="sec__l">Your slots</p>
+                  <div class="card">
+                    <div class="slots"><span>7 am</span><span>12 pm</span><span>6 pm</span></div>
+                    <p class="row__d" style="margin-top:12px">3 slots · 7 h a day</p>
+                  </div>
+                </div>
+              </div>
+              <nav class="tabbar">
+                <span class="tab"><svg width="19" height="19" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 10 5l6 6.5M6.5 10v8.5h7V10"/></svg>Home</span>
+                <span class="tab"><svg width="19" height="19" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 17.5h15M5.5 17.5V10M10 17.5V5.5M14.5 17.5v-5M19 17.5V8"/></svg>Plan</span>
+                <span class="tab tab--craving"><svg width="17" height="17" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 2.5 5 11.5h5l-1.5 8 8.5-9h-5Z"/></svg>Craving</span>
+                <span class="tab"><svg width="19" height="19" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 18.5 9 12l4 4 5.5-8"/></svg>Progress</span>
+                <span class="tab"><svg width="19" height="19" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4.2a1 1 0 0 1 1 0l.5 1.9 1.6.7 1.7-1a1 1 0 0 1 1.3.4l.9 1.5a1 1 0 0 1-.2 1.3l-1.5 1.2v1.6l1.5 1.2a1 1 0 0 1 .2 1.3l-.9 1.5a1 1 0 0 1-1.3.4l-1.7-1-1.6.7-.5 1.9a1 1 0 0 1-1 0l-.5-1.9-1.6-.7-1.7 1a1 1 0 0 1-1.3-.4l-.9-1.5a1 1 0 0 1 .2-1.3l1.5-1.2v-1.6L4.4 8.4a1 1 0 0 1-.2-1.3l.9-1.5a1 1 0 0 1 1.3-.4l1.7 1 1.6-.7Z"/></svg>Settings</span>
+              </nav>
+            </div>
+          </div></div>
+        </div>
+        <div class="brand">
+          <span class="brand__m">Quit Smoke</span>
+          <span class="brand__t">Smoke-Free Plan · Craving Escape · Trigger Zones</span>
+        </div>
+      </figure>
+    </div>
+
+    <!-- 3 · WALK -->
+    <div>
+      <p class="stack__l">03 · Craving Escape · Walk</p>
+      <figure class="frame" data-od-id="shot-03-walk" role="img"
+        aria-label="App Store screenshot 3 of 6. Craving Escape step one of two: a five minute walk timer at 05:00 with a Start breathing button. Caption: When a craving hits, walk first.">
+        <div class="cap">
+          <p class="kicker">03 / 06 · Craving Escape</p>
+          <h2 class="hl">When a craving hits, walk first</h2>
+          <p class="sub">An urge cannot be argued down, only outlasted. Change your surroundings and the thought changes with it.</p>
+        </div>
+        <div class="ph" aria-hidden="true">
+          <div class="phone"><div class="scr">
+            <div class="status"><span>9:41</span><span class="status__i">
+              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4"/><rect x="4.5" y="5" width="3" height="6"/><rect x="9" y="2.5" width="3" height="8.5"/><rect x="13.5" y="0" width="3" height="11"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="15" height="8" rx="1.6" fill="currentColor"/></svg>
+            </span></div>
+            <div class="view">
+              <div class="topbar"><span class="topbar__t">Craving Escape</span><span class="topbar__x">1 / 2</span></div>
+              <div class="body" style="align-items:center;text-align:center">
+                <h3 class="h1">Get up and walk.</h3>
+                <p class="cue">Change your surroundings and the thought changes with it. Leave the room it happened in and let your body take over for a few minutes.</p>
+                <div class="seg" style="width:100%"><button type="button" aria-pressed="true">5 min</button><button type="button" aria-pressed="false">10 min</button><button type="button" aria-pressed="false">20 min</button></div>
+                <div style="position:relative;width:200px;height:200px;margin-top:4px">
+                  <svg viewBox="0 0 220 220" width="200" height="200" fill="none" aria-hidden="true">
+                    <circle cx="110" cy="110" r="94" stroke="var(--line)" stroke-width="8"/>
+                    <circle cx="110" cy="110" r="94" stroke="#f0f0fa" stroke-width="8" stroke-linecap="round"
+                      stroke-dasharray="590.6" stroke-dashoffset="118" transform="rotate(-90 110 110)"/>
+                  </svg>
+                  <div class="ring-mid">
+                    <p class="ring-num">05:00</p>
+                    <p class="ring-sub">0 steps</p>
+                    <p class="prose" style="font-size:12px">Remaining</p>
+                  </div>
+                </div>
+                <p class="prose" style="font-size:12px">Walk timer running.</p>
+              </div>
+              <div class="foot">
+                <span class="cta">Start breathing</span>
+                <span class="cta cta--ghost">Stop and log it</span>
+              </div>
+            </div>
+          </div></div>
+        </div>
+        <div class="brand">
+          <span class="brand__m">Quit Smoke</span>
+          <span class="brand__t">Smoke-Free Plan · Craving Escape · Trigger Zones</span>
+        </div>
+      </figure>
+    </div>
+
+    <!-- 4 · BREATHE -->
+    <div>
+      <p class="stack__l">04 · Craving Escape · Breathe</p>
+      <figure class="frame" data-od-id="shot-04-breathe" role="img"
+        aria-label="App Store screenshot 4 of 6. Craving Escape step two of two: a five minute breathing timer at 05:00, alternating your nostrils or breathing through both with attention on the exhale. Caption: Then breathe.">
+        <div class="cap">
+          <p class="kicker">04 / 06 · Craving Escape</p>
+          <h2 class="hl">Then breathe</h2>
+          <p class="sub">Breathe through both, slowly, with your attention on the exhale. That focus is what settles you, not the pattern.</p>
+        </div>
+        <div class="ph" aria-hidden="true">
+          <div class="phone"><div class="scr">
+            <div class="status"><span>9:41</span><span class="status__i">
+              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4"/><rect x="4.5" y="5" width="3" height="6"/><rect x="9" y="2.5" width="3" height="8.5"/><rect x="13.5" y="0" width="3" height="11"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="15" height="8" rx="1.6" fill="currentColor"/></svg>
+            </span></div>
+            <div class="view">
+              <div class="topbar"><span class="topbar__t">Craving Escape</span><span class="topbar__x">2 / 2</span></div>
+              <div class="body" style="align-items:center;text-align:center">
+                <h3 class="h1">Now breathe.</h3>
+                <p class="cue">Let your next breath be smoke-free. Breathe through both, slowly, with your attention on the exhale.</p>
+                <div class="seg" style="width:100%"><button type="button" aria-pressed="false">2 min</button><button type="button" aria-pressed="true">5 min</button><button type="button" aria-pressed="false">10 min</button></div>
+                <div style="position:relative;width:200px;height:200px;margin-top:4px">
+                  <svg viewBox="0 0 220 220" width="200" height="200" fill="none" aria-hidden="true">
+                    <circle cx="110" cy="110" r="94" stroke="var(--line)" stroke-width="8"/>
+                    <circle cx="110" cy="110" r="94" stroke="#f0f0fa" stroke-width="8" stroke-linecap="round"
+                      stroke-dasharray="590.6" stroke-dashoffset="354" transform="rotate(-90 110 110)"/>
+                  </svg>
+                  <div class="ring-mid">
+                    <p class="ring-num">05:00</p>
+                    <p class="prose" style="font-size:12px">Remaining</p>
+                  </div>
+                </div>
+                <p class="prose" style="font-size:12px">Skip the nostril work if one is blocked. Attention on the exhale is the part that helps.</p>
+              </div>
+              <div class="foot">
+                <span class="cta">Done</span>
+                <span class="cta cta--ghost">Skip to reflection</span>
+              </div>
+            </div>
+          </div></div>
+        </div>
+        <div class="brand">
+          <span class="brand__m">Quit Smoke</span>
+          <span class="brand__t">Smoke-Free Plan · Craving Escape · Trigger Zones</span>
+        </div>
+      </figure>
+    </div>
+
+    <!-- 5 · PROGRESS -->
+    <div>
+      <p class="stack__l">05 · Progress</p>
+      <figure class="frame" data-od-id="shot-05-progress" role="img"
+        aria-label="App Store screenshot 5 of 6. The Progress screen: three days in a row, cravings cleared per day over the last seven days, 4 cravings cleared and $36.00 money saved. Caption: A slip does not reset it.">
+        <div class="cap">
+          <p class="kicker">05 / 06 · Progress</p>
+          <h2 class="hl">A slip does not reset it</h2>
+          <p class="sub">No resets, ever. If you slip, the timer keeps running and the streak keeps its count.</p>
+        </div>
+        <div class="ph" aria-hidden="true">
+          <div class="phone"><div class="scr">
+            <div class="status"><span>9:41</span><span class="status__i">
+              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4"/><rect x="4.5" y="5" width="3" height="6"/><rect x="9" y="2.5" width="3" height="8.5"/><rect x="13.5" y="0" width="3" height="11"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="15" height="8" rx="1.6" fill="currentColor"/></svg>
+            </span></div>
+            <div class="view">
+              <div class="topbar"><span class="topbar__t">Progress</span><span class="topbar__x">Last 7 days</span></div>
+              <div class="body">
+                <div class="card" style="text-align:center">
+                  <p class="sec__l" style="margin-bottom:8px">Days in a row</p>
+                  <p class="digits" style="margin:0;font-size:74px">3</p>
+                </div>
+                <div class="card">
+                  <p class="sec__l">Cravings cleared per day</p>
+                  <div class="chart">
+                    <i class="on" style="height:50%"></i><i class="on" style="height:50%"></i><i style="height:4%"></i>
+                    <i style="height:4%"></i><i class="on" style="height:100%"></i><i style="height:4%"></i><i style="height:4%"></i>
+                  </div>
+                  <div class="chartl"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+                </div>
+                <div class="card grid2">
+                  <div><p class="stat__v">4</p><p class="stat__l">Cravings cleared</p></div>
+                  <div><p class="stat__v">$36.00</p><p class="stat__l">Money saved</p></div>
+                </div>
+                <p class="prose" style="font-size:12.5px">If you slip later, the streak keeps its count and the timer keeps running. Coming back is the whole point.</p>
+              </div>
+              <nav class="tabbar">
+                <span class="tab"><svg width="19" height="19" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 10 5l6 6.5M6.5 10v8.5h7V10"/></svg>Home</span>
+                <span class="tab"><svg width="19" height="19" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 17.5h15M5.5 17.5V10M10 17.5V5.5M14.5 17.5v-5M19 17.5V8"/></svg>Plan</span>
+                <span class="tab tab--craving"><svg width="17" height="17" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 2.5 5 11.5h5l-1.5 8 8.5-9h-5Z"/></svg>Craving</span>
+                <span class="tab"><svg width="19" height="19" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 18.5 9 12l4 4 5.5-8"/></svg>Progress</span>
+                <span class="tab"><svg width="19" height="19" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4.2a1 1 0 0 1 1 0l.5 1.9 1.6.7 1.7-1a1 1 0 0 1 1.3.4l.9 1.5a1 1 0 0 1-.2 1.3l-1.5 1.2v1.6l1.5 1.2a1 1 0 0 1 .2 1.3l-.9 1.5a1 1 0 0 1-1.3.4l-1.7-1-1.6.7-.5 1.9a1 1 0 0 1-1 0l-.5-1.9-1.6-.7-1.7 1a1 1 0 0 1-1.3-.4l-.9-1.5a1 1 0 0 1 .2-1.3l1.5-1.2v-1.6L4.4 8.4a1 1 0 0 1-.2-1.3l.9-1.5a1 1 0 0 1 1.3-.4l1.7 1 1.6-.7Z"/></svg>Settings</span>
+              </nav>
+            </div>
+          </div></div>
+        </div>
+        <div class="brand">
+          <span class="brand__m">Quit Smoke</span>
+          <span class="brand__t">Smoke-Free Plan · Craving Escape · Trigger Zones</span>
+        </div>
+      </figure>
+    </div>
+
+    <!-- 6 · ZONES -->
+    <div>
+      <p class="stack__l">06 · Trigger Zones</p>
+      <figure class="frame" data-od-id="shot-06-zones" role="img"
+        aria-label="App Store screenshot 6 of 6. The Trigger Zones screen: a nudge when you enter a place where you usually buy or smoke, with Corner store 120 metres away, Gas station on 4th 400 metres away and The bar on Ellis 1.1 kilometres away. Caption: Zones you walk into.">
+        <div class="cap">
+          <p class="kicker">06 / 06 · Trigger Zones</p>
+          <h2 class="hl">Zones you walk into</h2>
+          <p class="sub">Save the places where you usually buy or smoke. Get a nudge before the craving finds you.</p>
+        </div>
+        <div class="ph" aria-hidden="true">
+          <div class="phone"><div class="scr">
+            <div class="status"><span>9:41</span><span class="status__i">
+              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4"/><rect x="4.5" y="5" width="3" height="6"/><rect x="9" y="2.5" width="3" height="8.5"/><rect x="13.5" y="0" width="3" height="11"/></svg>
+              <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="15" height="8" rx="1.6" fill="currentColor"/></svg>
+            </span></div>
+            <div class="view">
+              <div class="topbar">
+                <span class="back"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m10 3-5 5 5 5"/></svg></span>
+                <span class="topbar__t">Trigger Zones</span>
+              </div>
+              <div class="body">
+                <p class="prose">A nudge when you enter a place where you usually buy or smoke. Switch one off and it stays saved.</p>
+                <div class="card" style="padding:2px 16px">
+                  <div class="rows">
+                    <div class="row">
+                      <span><span class="row__t">Corner store</span><span class="row__d">120 m away · 250 m radius</span></span>
+                      <span class="sw" role="switch" aria-checked="true"><i></i></span>
+                    </div>
+                    <div class="row">
+                      <span><span class="row__t">Gas station on 4th</span><span class="row__d">400 m away · 250 m radius</span></span>
+                      <span class="sw" role="switch" aria-checked="true"><i></i></span>
+                    </div>
+                    <div class="row">
+                      <span><span class="row__t">The bar on Ellis</span><span class="row__d">1.1 km away · 500 m radius</span></span>
+                      <span class="sw" role="switch" aria-checked="false"><i></i></span>
+                    </div>
+                  </div>
+                </div>
+                <p class="prose" style="font-size:12px">Free keeps 1 zone. The plan saves as many as you need.</p>
+              </div>
+              <div class="foot">
+                <span class="cta">Add a zone</span>
+              </div>
+            </div>
+          </div></div>
+        </div>
+        <div class="brand">
+          <span class="brand__m">Quit Smoke</span>
+          <span class="brand__t">Smoke-Free Plan · Craving Escape · Trigger Zones</span>
+        </div>
+      </figure>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const gridBtn = document.getElementById('gridBtn');
+  gridBtn.addEventListener('click', () => {
+    const on = gridBtn.getAttribute('aria-pressed') !== 'true';
+    gridBtn.setAttribute('aria-pressed', String(on));
+    document.querySelectorAll('.frame').forEach(f => f.dataset.grid = on ? 'on' : 'off');
+  });
+  document.getElementById('printBtn').addEventListener('click', () => window.print());
+</script>
+</body>
+</html>

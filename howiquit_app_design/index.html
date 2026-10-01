@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark light" />
+<title>Quit Smoke — Prototype</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   DESIGN-SYSTEM TOKENS — design-systems/spacex/tokens.css (verbatim)
+   The raw palette values live in :root only. The semantic tokens below
+   alias those primitives, so a light/dark collage can re-point --bg/--fg
+   in a scope (see .s-light/.s-dark) without any raw hex outside :root.
+   ═══════════════════════════════════════════════════════════════════════ */
+:root {
+  /* dark palette primitives (SpaceX-native) */
+  --d-bg: #000000;
+  --d-fg: #f0f0fa;
+  --d-muted: rgba(240, 240, 250, 0.7);
+  --d-border: rgba(240, 240, 250, 0.35);
+  --d-border-soft: rgba(240, 240, 250, 0.1);
+  --d-accent: #f0f0fa;
+  --d-accent-on: #000000;
+  --d-accent-hover: #ffffff;
+  --d-accent-active: #d8d8e6;
+
+  /* light palette primitives (the inversion, not a mirror) */
+  --l-bg: #FFFFFF;
+  --l-fg: #0A0A0A;
+  --l-muted: rgba(10, 10, 10, 0.62);
+  --l-border: rgba(10, 10, 10, 0.3);
+  --l-border-soft: rgba(10, 10, 10, 0.1);
+  --l-accent: #0A0A0A;
+  --l-accent-on: #FFFFFF;
+  --l-accent-hover: #2A2A2A;
+  --l-accent-active: #000000;
+
+  /* semantic tokens — default to the dark palette */
+  --bg: var(--d-bg);
+  --surface: var(--d-bg);
+  --surface-warm: var(--surface);
+  --fg: var(--d-fg);
+  --fg-2: var(--fg);
+  --muted: var(--d-muted);
+  --meta: var(--muted);
+  --border: var(--d-border);
+  --border-soft: var(--d-border-soft);
+  --accent: var(--d-accent);
+  --accent-on: var(--d-accent-on);
+  --accent-hover: var(--d-accent-hover);
+  --accent-active: var(--d-accent-active);
+
+  --success: #16a34a;
+  --warn: #eab308;
+  --danger: #dc2626;
+
+  --font-display: "D-DIN-Bold", "D-DIN", "DIN Alternate", "Helvetica Neue", Arial, Verdana, sans-serif;
+  --font-body: "D-DIN", "DIN Alternate", "Helvetica Neue", Arial, Verdana, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+
+  --text-xs: 10px;
+  --text-sm: 12px;
+  --text-base: 16px;
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 32px;
+  --text-3xl: 40px;
+  --text-4xl: 48px;
+
+  --leading-body: 1.5;
+  --leading-tight: 1.0;
+  --tracking-display: 0.02em;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  --section-y-desktop: 120px;
+  --section-y-tablet: 80px;
+  --section-y-phone: 56px;
+
+  --radius-sm: 4px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-pill: 32px;
+
+  --elev-flat: none;
+  --elev-ring: 0 0 0 1px var(--border);
+  --elev-raised: none;
+
+  --focus-ring: 0 0 0 2px var(--accent);
+
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  --container-max: 1440px;
+  --container-gutter-desktop: 24px;
+  --container-gutter-tablet: 20px;
+  --container-gutter-phone: 18px;
+
+  --scrim: rgba(0, 0, 0, 0.55);
+  --scrim-strong: rgba(0, 0, 0, 0.78);
+}
+
+/* ─── theme: the page shell follows the system / toggle ───────────── */
+:root[data-theme="light"] {
+  --bg: var(--l-bg);
+  --surface: var(--l-bg);
+  --fg: var(--l-fg);
+  --muted: var(--l-muted);
+  --border: var(--l-border);
+  --border-soft: var(--l-border-soft);
+  --accent: var(--l-accent);
+  --accent-on: var(--l-accent-on);
+  --accent-hover: var(--l-accent-hover);
+  --accent-active: var(--l-accent-active);
+  color-scheme: light;
+}
+/* ─── collage scopes: fixed light / dark cards, independent of page ── */
+.s-light {
+  --bg: var(--l-bg); --surface: var(--l-bg); --fg: var(--l-fg);
+  --muted: var(--l-muted); --border: var(--l-border); --border-soft: var(--l-border-soft);
+  --accent: var(--l-accent); --accent-on: var(--l-accent-on);
+  --accent-hover: var(--l-accent-hover); --accent-active: var(--l-accent-active);
+  color-scheme: light;
+}
+.s-dark {
+  --bg: var(--d-bg); --surface: var(--d-bg); --fg: var(--d-fg);
+  --muted: var(--d-muted); --border: var(--d-border); --border-soft: var(--d-border-soft);
+  --accent: var(--d-accent); --accent-on: var(--d-accent-on);
+  --accent-hover: var(--d-accent-hover); --accent-active: var(--d-accent-active);
+  color-scheme: dark;
+}
+
+@font-face { font-family: "D-DIN"; font-weight: 100 900; font-display: swap;
+  src: local("D-DIN"), local("DIN Alternate"), local("Bahnschrift"),
+       url("assets/fonts/saira-var.woff2") format("woff2"); }
+@font-face { font-family: "D-DIN-Bold"; font-weight: 700; font-display: swap;
+  src: local("D-DIN-Bold"), url("assets/fonts/saira-var.woff2") format("woff2"); }
+@font-face { font-family: "D-DIN-Cond"; font-weight: 700; font-display: swap;
+  src: local("D-DIN-Cond"), url("assets/fonts/saira-cond-700.woff2") format("woff2"); }
+
+/* ─── base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-body);
+  font-size: var(--text-base); line-height: var(--leading-body);
+  text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+img, svg { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; cursor: pointer; background: none; border: 0; }
+p, h1, h2, h3 { margin: 0; }
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ─── page shell ───────────────────────────────────────────────────── */
+.page { min-height: 100dvh; display: flex; flex-direction: column; }
+.bar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between;
+  gap: var(--space-4); width: 100%; margin-inline: auto; padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--border-soft); background: color-mix(in oklch, var(--bg) 82%, transparent);
+  backdrop-filter: saturate(140%) blur(14px); -webkit-backdrop-filter: saturate(140%) blur(14px); }
+.bar__mark { font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; }
+.bar__nav { display: flex; gap: var(--space-2); }
+.bar__link { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; padding: 8px 12px; border: 1px solid var(--border-soft); border-radius: var(--radius-pill); }
+.bar__link:hover { color: var(--fg); border-color: var(--border); }
+.toggle { min-height: 40px; padding: 0 18px; border: 1px solid var(--border-soft); border-radius: var(--radius-pill);
+  font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.toggle:hover { color: var(--fg); border-color: var(--border); }
+
+.wrap { width: 100%; max-width: 1180px; margin-inline: auto; padding: var(--space-8) var(--space-6) var(--space-12); }
+.eyebrow { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.lead { max-width: 60ch; }
+
+/* ─── hero ─────────────────────────────────────────────────────────── */
+.hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: var(--space-12); align-items: center; padding: var(--space-8) 0 var(--space-12); }
+.hero__h1 { margin-top: var(--space-4); font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(40px, 7vw, 72px); line-height: 0.98; letter-spacing: 0.005em; text-transform: uppercase; }
+.hero__sub { margin-top: var(--space-5); font-size: 16.5px; line-height: 1.55; color: var(--muted); max-width: 46ch; }
+.hero__rules { margin-top: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); }
+.hero__rules li { list-style: none; border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5); font-family: var(--font-display); font-weight: 700;
+  font-size: 15px; letter-spacing: 0.03em; text-transform: uppercase; }
+.hero__cta { margin-top: var(--space-8); display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.hero__art { position: relative; aspect-ratio: 4 / 5; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border); }
+.hero__art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  filter: grayscale(1) brightness(0.5) contrast(1.08); }
+.hero__art::after { content: ""; position: absolute; inset: 0; background: var(--scrim-strong); }
+.hero__art figcaption { position: absolute; z-index: 2; left: var(--space-5); right: var(--space-5); bottom: var(--space-5);
+  font-size: var(--text-xs); letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255, 255, 255, 0.62); }
+.hero__stamp { position: absolute; z-index: 2; top: var(--space-5); left: var(--space-5);
+  font-family: "D-DIN-Cond", var(--font-display); font-weight: 700; font-size: 22px; letter-spacing: 0.02em; color: var(--fg); }
+
+/* ─── section rail ─────────────────────────────────────────────────── */
+.sec { margin-top: var(--space-12); }
+.sec__h { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4);
+  border-bottom: 1px solid var(--border); padding-bottom: var(--space-3); }
+.sec__t { font-family: var(--font-display); font-weight: 700; font-size: 22px; letter-spacing: 0.02em; text-transform: uppercase; }
+.sec__n { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.14em; color: var(--muted); }
+.sec__d { margin-top: var(--space-4); font-size: 15px; line-height: 1.55; color: var(--muted); max-width: 62ch; }
+
+/* ─── launcher cards ───────────────────────────────────────────────── */
+.launch { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: var(--space-4); margin-top: var(--space-6); }
+.lcard { display: flex; flex-direction: column; gap: var(--space-2); text-decoration: none;
+  border: 1px solid var(--border-soft); border-radius: var(--radius-md); background: color-mix(in oklch, var(--fg) 3%, transparent);
+  padding: var(--space-5); min-height: 148px; transition: border-color var(--motion-fast) var(--ease-standard), background var(--motion-fast) var(--ease-standard); }
+.lcard:hover { border-color: var(--border); background: color-mix(in oklch, var(--fg) 6%, transparent); }
+.lcard__n { font-size: 9.5px; font-weight: 700; letter-spacing: 0.16em; color: var(--muted); }
+.lcard__t { font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: 0.02em; text-transform: uppercase; }
+.lcard__d { font-size: 13.5px; line-height: 1.45; color: var(--muted); }
+.lcard__go { margin-top: auto; font-size: 10.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--fg); }
+.lcard--spec { background: none; }
+
+/* ─── collage: priority screens, light and dark ────────────────────── */
+.pairs { display: grid; gap: var(--space-8); margin-top: var(--space-6); }
+.pair__name { font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.pair__row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-top: var(--space-3); }
+.pair__cell { position: relative; }
+.pair__tag { position: absolute; top: 8px; right: 8px; z-index: 3; padding: 4px 9px; border-radius: var(--radius-pill);
+  background: color-mix(in oklch, var(--fg) 10%, transparent); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+
+/* device shot */
+.shot { container-type: inline-size; position: relative; display: flex; flex-direction: column;
+  width: 100%; aspect-ratio: 390 / 700; border: 1px solid var(--border); border-radius: 20px;
+  background: var(--bg); overflow: hidden; color: var(--fg); }
+.shot__notch { flex: none; height: 18px; display: grid; place-items: center; }
+.shot__notch i { width: 72px; height: 16px; border-radius: 10px; background: var(--fg); opacity: 0.9; }
+.shot__bar { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: var(--space-3); gap: 10px; }
+.shot__row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.shot__eyebrow { font-size: 8px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.shot__title { font-family: var(--font-display); font-weight: 700; font-size: clamp(13px, 4.2cqi, 16px);
+  line-height: 1.08; letter-spacing: 0.01em; text-transform: uppercase; }
+.shot__digits { font-family: "D-DIN-Cond", var(--font-display); font-weight: 700; font-size: clamp(34px, 11cqi, 46px);
+  line-height: 1; letter-spacing: 0.01em; margin: 4px 0 6px; }
+.shot__meter { height: 2px; background: var(--border-soft); }
+.shot__meter i { display: block; width: 26%; height: 100%; background: var(--accent); }
+.shot__rule { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 7px 9px;
+  font-family: var(--font-display); font-weight: 700; font-size: 9.5px; letter-spacing: 0.03em; text-transform: uppercase; }
+.shot__rail { display: flex; gap: 3px; }
+.shot__rail div { flex: 1; text-align: center; }
+.shot__rail .b { height: 16px; border: 1px solid var(--border-soft); border-radius: 2px; display: flex; align-items: flex-end; }
+.shot__rail .b i { display: block; width: 100%; background: color-mix(in oklch, var(--fg) 22%, transparent); }
+.shot__rail div.is-done .b { border-color: transparent; }
+.shot__rail div.is-done .b i { background: color-mix(in oklch, var(--fg) 45%, transparent); }
+.shot__rail div.is-now .b { border-color: var(--fg); }
+.shot__rail div.is-now .b i { background: var(--accent); }
+.shot__rail .d { margin-top: 3px; font-size: 6.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--muted); }
+.shot__rail div.is-now .d, .shot__rail div.is-done .d { color: var(--fg); }
+.shot__tabbar { flex: none; display: grid; grid-template-columns: 1fr 1fr auto 1fr 1fr; align-items: center; gap: 2px;
+  padding: 6px 8px; border-top: 1px solid var(--border-soft); }
+.shot__tab { display: grid; place-items: center; color: var(--muted); min-height: 30px; border-radius: 4px; }
+.shot__tab.is-on { color: var(--fg); }
+.shot__craving { grid-column: 3; display: flex; align-items: center; gap: 4px; min-height: 26px; padding: 0 10px;
+  border-radius: var(--radius-pill); background: var(--accent); color: var(--accent-on);
+  font-size: 7.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.shot__cta { width: 100%; min-height: 34px; border-radius: var(--radius-pill); background: var(--accent); color: var(--accent-on);
+  font-family: var(--font-display); font-weight: 700; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  display: flex; align-items: center; justify-content: center; }
+.shot__cta--ghost { background: none; color: var(--muted); border: 1px solid var(--border-soft); }
+.shot__ring { width: 46%; aspect-ratio: 1; margin: 4px auto; position: relative; }
+.shot__ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.shot__ring circle { fill: none; stroke-width: 6; }
+.shot__ring .t { stroke: var(--border-soft); }
+.shot__ring .p { stroke: var(--accent); }
+.shot__ring-n { position: absolute; inset: 0; display: grid; place-items: center;
+  font-family: "D-DIN-Cond", var(--font-display); font-weight: 700; font-size: 15px; letter-spacing: 0.01em; }
+.shot__bar2 { display: flex; align-items: flex-end; gap: 4px; height: 52px; margin-top: 6px; }
+.shot__bar2 div { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
+.shot__bar2 i { display: block; background: color-mix(in oklch, var(--fg) 30%, transparent); border-radius: 2px 2px 0 0; }
+.shot__bar2 div.is-max i { background: var(--accent); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important; }
+}
+@media (max-width: 920px) {
+  .hero { grid-template-columns: 1fr; gap: var(--space-8); }
+  .hero__art { aspect-ratio: 16 / 10; }
+}
+@media (max-width: 720px) {
+  .bar { padding: var(--space-3) var(--space-4); }
+  .bar__nav { display: none; }
+  .wrap { padding: var(--space-6) var(--space-4) var(--space-12); }
+  .pair__row { grid-template-columns: 1fr; }
+  .shot { max-width: 320px; margin-inline: auto; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="bar" data-od-id="page-bar">
+    <span class="bar__mark">Quit Smoke</span>
+    <nav class="bar__nav" aria-label="Sections">
+      <a class="bar__link" href="#screens">Priority screens</a>
+      <a class="bar__link" href="brand-spec.md">Brand spec</a>
+    </nav>
+    <button class="toggle" id="theme" data-od-id="theme-toggle" style="width:96px;">Light</button>
+  </div>
+
+  <main class="wrap">
+
+    <!-- ══ HERO ═════════════════════════════════════════════════ -->
+    <header class="hero" data-od-id="hero">
+      <div>
+        <p class="eyebrow">Quit Smoke × SpaceX</p>
+        <h1 class="hero__h1">A timer that never stops.</h1>
+        <p class="hero__sub">Two rules, written the way a spacecraft is labelled. The timer grows on its own; when a craving arrives, you walk and you breathe. That is the whole product.</p>
+        <ul class="hero__rules">
+          <li data-od-id="hero-rule-1">Timer running → I don't smoke</li>
+          <li data-od-id="hero-rule-2">Craving → Walk → Breathe → Move on</li>
+        </ul>
+        <div class="hero__cta">
+          <a class="shot__cta" style="width:auto;padding:0 22px;text-decoration:none;" href="mobile-app.html">Open the app</a>
+          <a class="shot__cta shot__cta--ghost" style="width:auto;padding:0 22px;text-decoration:none;" href="mobile-onboarding.html">See onboarding</a>
+        </div>
+      </div>
+      <figure class="hero__art" data-od-id="hero-image" style="margin:0;">
+        <img src="assets/photos/city-sunrise.jpg" width="1000" height="317"
+             alt="A city skyline on the far bank of a river, caught by the first light of a winter sunrise" />
+        <p class="hero__stamp">DAY 3 · 09:00:00</p>
+        <figcaption>The first morning without one</figcaption>
+      </figure>
+    </header>
+
+    <!-- ══ LAUNCHER ═════════════════════════════════════════════ -->
+    <section class="sec" data-od-id="sec-launch" aria-labelledby="h-launch">
+      <div class="sec__h"><h2 class="sec__t" id="h-launch">Open a file</h2><span class="sec__n">01</span></div>
+      <p class="sec__d">Seven self-contained files. No build step, no framework, no hotlinks — fonts and photography are local. Every screen honours light and dark.</p>
+      <div class="launch" data-od-id="launcher">
+        <a class="lcard" href="mobile-onboarding.html" data-od-id="launch-onboarding">
+          <p class="lcard__n">01</p><p class="lcard__t">Onboarding</p>
+          <p class="lcard__d">Eight steps: the problem, the two tools, the fix, the plan.</p>
+          <p class="lcard__go">Open →</p>
+        </a>
+        <a class="lcard" href="mobile-app.html" data-od-id="launch-app">
+          <p class="lcard__n">02</p><p class="lcard__t">The app</p>
+          <p class="lcard__d">Home, Plan, Craving Escape, Progress, Trigger Zones, Settings.</p>
+          <p class="lcard__go">Open →</p>
+        </a>
+        <a class="lcard" href="mobile-system-surfaces.html" data-od-id="launch-surfaces">
+          <p class="lcard__n">03</p><p class="lcard__t">System surfaces</p>
+          <p class="lcard__d">Widgets, Live Activity, Dynamic Island, lock screen, notifications, states.</p>
+          <p class="lcard__go">Open →</p>
+        </a>
+        <a class="lcard lcard--spec" href="brand-spec.md" data-od-id="launch-spec">
+          <p class="lcard__n">04</p><p class="lcard__t">Brand spec</p>
+          <p class="lcard__d">Tokens, type, the seven rules, data honesty, image credits.</p>
+          <p class="lcard__go">Read →</p>
+        </a>
+        <a class="lcard" href="app-icons.html" data-od-id="launch-icons">
+          <p class="lcard__n">05</p><p class="lcard__t">App icon directions</p>
+          <p class="lcard__d">Six marks — Ring, Ramp, Zero, Continuum, QS, Horizon — with mask previews and SVG export.</p>
+          <p class="lcard__go">Pick one →</p>
+        </a>
+        <a class="lcard" href="play-store-screenshots.html" data-od-id="launch-play-shots">
+          <p class="lcard__n">06</p><p class="lcard__t">Play Store screenshots</p>
+          <p class="lcard__d">Six frames at 1080 × 1920, built from the real Day 3 screens.</p>
+          <p class="lcard__go">Open →</p>
+        </a>
+        <a class="lcard" href="app-store-screenshots.html" data-od-id="launch-app-shots">
+          <p class="lcard__n">07</p><p class="lcard__t">App Store screenshots</p>
+          <p class="lcard__d">The same six frames at the 1320 × 2868 iOS master size.</p>
+          <p class="lcard__go">Open →</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- ══ PRIORITY SCREENS ══════════════════════════════════════ -->
+    <section class="sec" id="screens" data-od-id="sec-screens" aria-labelledby="h-screens">
+      <div class="sec__h"><h2 class="sec__t" id="h-screens">Priority screens, both themes</h2><span class="sec__n">02</span></div>
+      <p class="sec__d">The three screens that carry the product, each shown in light and dark side by side. Light is the inversion of the same tokens, not a second palette — the filled accent, the hairlines and the condensed numerals are identical.</p>
+
+      <div class="pairs" data-od-id="collage">
+
+        <!-- Home -->
+        <div class="pair" data-od-id="pair-home">
+          <p class="pair__name">Home — the running timer</p>
+          <div class="pair__row">
+            <div class="pair__cell s-dark" data-od-id="shot-home-dark">
+              <span class="pair__tag">Dark</span>
+              <div class="shot">
+                <div class="shot__notch"><i></i></div>
+                <div class="shot__bar">
+                  <div class="shot__row"><p class="shot__title">Home</p><p class="shot__eyebrow num">Day 3 of 7</p></div>
+                  <div style="border:1px solid var(--border);border-radius:4px;padding:10px;">
+                    <div class="shot__row"><p class="shot__eyebrow">● Timer is running</p><p class="shot__eyebrow">9 hour target</p></div>
+                    <p class="shot__digits num">09:00:00</p>
+                    <div class="shot__meter"><i></i></div>
+                    <div class="shot__row" style="margin-top:6px;"><p class="shot__eyebrow">Remaining today</p><p class="shot__eyebrow num">1:25:00</p></div>
+                  </div>
+                  <p class="shot__rule">Timer running → I don't smoke</p>
+                  <div>
+                    <p class="shot__eyebrow" style="margin-bottom:4px;">The seven days</p>
+                    <div class="shot__rail">
+                      <div class="is-done"><div class="b"><i style="height:100%"></i></div><p class="d">D1</p></div>
+                      <div class="is-done"><div class="b"><i style="height:100%"></i></div><p class="d">D2</p></div>
+                      <div class="is-now"><div class="b"><i style="height:26%"></i></div><p class="d">D3</p></div>
+                      <div><div class="b"><i style="height:8%"></i></div><p class="d">D4</p></div>
+                      <div><div class="b"><i style="height:8%"></i></div><p class="d">D5</p></div>
+                      <div><div class="b"><i style="height:8%"></i></div><p class="d">D6</p></div>
+                      <div><div class="b"><i style="height:8%"></i></div><p class="d">D7</p></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="shot__tabbar">
+                  <span class="shot__tab is-on"></span><span class="shot__tab"></span>
+                  <span class="shot__craving"><svg width="9" height="9" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 2.5 5 11.5h5l-1.5 8 8.5-9h-5Z"/></svg>Craving</span>
+                  <span class="shot__tab"></span><span class="shot__tab"></span>
+                </div>
+              </div>
+            </div>
+            <div class="pair__cell s-light" data-od-id="shot-home-light">
+              <span class="pair__tag">Light</span>
+              <div class="shot">
+                <div class="shot__notch"><i></i></div>
+                <div class="shot__bar">
+                  <div class="shot__row"><p class="shot__title">Home</p><p class="shot__eyebrow num">Day 3 of 7</p></div>
+                  <div style="border:1px solid var(--border);border-radius:4px;padding:10px;">
+                    <div class="shot__row"><p class="shot__eyebrow">● Timer is running</p><p class="shot__eyebrow">9 hour target</p></div>
+                    <p class="shot__digits num">09:00:00</p>
+                    <div class="shot__meter"><i></i></div>
+                    <div class="shot__row" style="margin-top:6px;"><p class="shot__eyebrow">Remaining today</p><p class="shot__eyebrow num">1:25:00</p></div>
+                  </div>
+                  <p class="shot__rule">Timer running → I don't smoke</p>
+                  <div>
+                    <p class="shot__eyebrow" style="margin-bottom:4px;">The seven days</p>
+                    <div class="shot__rail">
+                      <div class="is-done"><div class="b"><i style="height:100%"></i></div><p class="d">D1</p></div>
+                      <div class="is-done"><div class="b"><i style="height:100%"></i></div><p class="d">D2</p></div>
+                      <div class="is-now"><div class="b"><i style="height:26%"></i></div><p class="d">D3</p></div>
+                      <div><div class="b"><i style="height:8%"></i></div><p class="d">D4</p></div>
+                      <div><div class="b"><i style="height:8%"></i></div><p class="d">D5</p></div>
+                      <div><div class="b"><i style="height:8%"></i></div><p class="d">D6</p></div>
+                      <div><div class="b"><i style="height:8%"></i></div><p class="d">D7</p></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="shot__tabbar">
+                  <span class="shot__tab is-on"></span><span class="shot__tab"></span>
+                  <span class="shot__craving"><svg width="9" height="9" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 2.5 5 11.5h5l-1.5 8 8.5-9h-5Z"/></svg>Craving</span>
+                  <span class="shot__tab"></span><span class="shot__tab"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Craving Escape -->
+        <div class="pair" data-od-id="pair-craving">
+          <p class="pair__name">Craving Escape — walk, then breathe</p>
+          <div class="pair__row">
+            <div class="pair__cell s-dark" data-od-id="shot-walk-dark">
+              <span class="pair__tag">Dark</span>
+              <div class="shot">
+                <div class="shot__notch"><i></i></div>
+                <div class="shot__bar">
+                  <div class="shot__row"><p class="shot__eyebrow">Step 1 of 2 · Walk</p><p class="shot__eyebrow num">1 / 2</p></div>
+                  <p class="shot__title">Get up and walk.</p>
+                  <div class="shot__row" style="margin:2px 0;"><span class="shot__cta shot__cta--ghost" style="min-height:24px;font-size:8px;">5 min</span><span class="shot__cta shot__cta--ghost" style="min-height:24px;font-size:8px;">10 min</span><span class="shot__cta shot__cta--ghost" style="min-height:24px;font-size:8px;">20 min</span></div>
+                  <div class="shot__ring">
+                    <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="t" cx="60" cy="60" r="52"/><circle class="p" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="0"/></svg>
+                    <span class="shot__ring-n num">05:00</span>
+                  </div>
+                  <p class="shot__eyebrow" style="text-align:center;">Walk timer running</p>
+                </div>
+                <div style="display:grid;gap:6px;padding:0 12px 12px;">
+                  <p class="shot__cta">Start breathing</p>
+                  <p class="shot__cta shot__cta--ghost">Stop and log it</p>
+                </div>
+              </div>
+            </div>
+            <div class="pair__cell s-light" data-od-id="shot-walk-light">
+              <span class="pair__tag">Light</span>
+              <div class="shot">
+                <div class="shot__notch"><i></i></div>
+                <div class="shot__bar">
+                  <div class="shot__row"><p class="shot__eyebrow">Step 1 of 2 · Walk</p><p class="shot__eyebrow num">1 / 2</p></div>
+                  <p class="shot__title">Get up and walk.</p>
+                  <div class="shot__row" style="margin:2px 0;"><span class="shot__cta shot__cta--ghost" style="min-height:24px;font-size:8px;">5 min</span><span class="shot__cta shot__cta--ghost" style="min-height:24px;font-size:8px;">10 min</span><span class="shot__cta shot__cta--ghost" style="min-height:24px;font-size:8px;">20 min</span></div>
+                  <div class="shot__ring">
+                    <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="t" cx="60" cy="60" r="52"/><circle class="p" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="0"/></svg>
+                    <span class="shot__ring-n num">05:00</span>
+                  </div>
+                  <p class="shot__eyebrow" style="text-align:center;">Walk timer running</p>
+                </div>
+                <div style="display:grid;gap:6px;padding:0 12px 12px;">
+                  <p class="shot__cta">Start breathing</p>
+                  <p class="shot__cta shot__cta--ghost">Stop and log it</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="pair" data-od-id="pair-progress">
+          <p class="pair__name">Progress — three days in</p>
+          <div class="pair__row">
+            <div class="pair__cell s-dark" data-od-id="shot-progress-dark">
+              <span class="pair__tag">Dark</span>
+              <div class="shot">
+                <div class="shot__notch"><i></i></div>
+                <div class="shot__bar">
+                  <div class="shot__row"><p class="shot__title">Progress</p><p class="shot__eyebrow">Last 7 days</p></div>
+                  <div style="border:1px solid var(--border);border-radius:4px;padding:10px;">
+                    <p class="shot__eyebrow">Smoke-free</p>
+                    <p class="shot__digits num" style="margin:4px 0 6px;">3</p>
+                    <div class="shot__meter"><i style="width:43%"></i></div>
+                    <div class="shot__row" style="margin-top:6px;"><p class="shot__eyebrow">Day 3 of 7</p><p class="shot__eyebrow num">$36.00 saved</p></div>
+                  </div>
+                  <div class="shot__bar2">
+                    <div><i style="height:72%"></i></div><div><i style="height:38%"></i></div>
+                    <div class="is-max"><i style="height:100%"></i></div><div><i style="height:52%"></i></div>
+                    <div><i style="height:26%"></i></div><div><i style="height:64%"></i></div>
+                    <div class="is-max"><i style="height:84%"></i></div>
+                  </div>
+                </div>
+                <div class="shot__tabbar">
+                  <span class="shot__tab"></span><span class="shot__tab"></span>
+                  <span class="shot__craving"><svg width="9" height="9" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 2.5 5 11.5h5l-1.5 8 8.5-9h-5Z"/></svg>Craving</span>
+                  <span class="shot__tab is-on"></span><span class="shot__tab"></span>
+                </div>
+              </div>
+            </div>
+            <div class="pair__cell s-light" data-od-id="shot-progress-light">
+              <span class="pair__tag">Light</span>
+              <div class="shot">
+                <div class="shot__notch"><i></i></div>
+                <div class="shot__bar">
+                  <div class="shot__row"><p class="shot__title">Progress</p><p class="shot__eyebrow">Last 7 days</p></div>
+                  <div style="border:1px solid var(--border);border-radius:4px;padding:10px;">
+                    <p class="shot__eyebrow">Smoke-free</p>
+                    <p class="shot__digits num" style="margin:4px 0 6px;">3</p>
+                    <div class="shot__meter"><i style="width:43%"></i></div>
+                    <div class="shot__row" style="margin-top:6px;"><p class="shot__eyebrow">Day 3 of 7</p><p class="shot__eyebrow num">$36.00 saved</p></div>
+                  </div>
+                  <div class="shot__bar2">
+                    <div><i style="height:72%"></i></div><div><i style="height:38%"></i></div>
+                    <div class="is-max"><i style="height:100%"></i></div><div><i style="height:52%"></i></div>
+                    <div><i style="height:26%"></i></div><div><i style="height:64%"></i></div>
+                    <div class="is-max"><i style="height:84%"></i></div>
+                  </div>
+                </div>
+                <div class="shot__tabbar">
+                  <span class="shot__tab"></span><span class="shot__tab"></span>
+                  <span class="shot__craving"><svg width="9" height="9" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 2.5 5 11.5h5l-1.5 8 8.5-9h-5Z"/></svg>Craving</span>
+                  <span class="shot__tab is-on"></span><span class="shot__tab"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+(() => {
+  const root = document.documentElement;
+  const $ = s => document.querySelector(s);
+  const mq = matchMedia('(prefers-color-scheme: light)');
+  let theme = 'dark';
+  try { theme = localStorage.getItem('qs.index.theme') || 'dark'; } catch (e) {}
+  const paint = () => {
+    const t = theme === 'auto' ? (mq.matches ? 'light' : 'dark') : theme;
+    root.dataset.theme = t;
+    $('#theme').textContent = t === 'dark' ? 'Light' : 'Dark';
+  };
+  mq.addEventListener('change', () => { if (theme === 'auto') paint(); });
+  $('#theme').addEventListener('click', () => {
+    theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    paint();
+    try { localStorage.setItem('qs.index.theme', theme); } catch (e) {}
+  });
+  paint();
+})();
+</script>
+</body>
+</html>

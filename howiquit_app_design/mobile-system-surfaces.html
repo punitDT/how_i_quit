@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark light" />
+<title>Quit Smoke — System Surfaces</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   DESIGN-SYSTEM TOKENS — design-systems/spacex/tokens.css (verbatim)
+   ═══════════════════════════════════════════════════════════════════════ */
+:root {
+  --bg: #000000;
+  --surface: #000000;
+  --surface-warm: var(--surface);
+
+  --fg: #f0f0fa;
+  --fg-2: var(--fg);
+  --muted: rgba(240, 240, 250, 0.7);
+  --meta: var(--muted);
+
+  --border: rgba(240, 240, 250, 0.35);
+  --border-soft: rgba(240, 240, 250, 0.1);
+
+  --accent: #f0f0fa;
+  --accent-on: #000000;
+  --accent-hover: #ffffff;
+  --accent-active: #d8d8e6;
+
+  --success: #16a34a;
+  --warn: #eab308;
+  --danger: #dc2626;
+
+  --font-display: "D-DIN-Bold", "D-DIN", "DIN Alternate", "Helvetica Neue", Arial, Verdana, sans-serif;
+  --font-body: "D-DIN", "DIN Alternate", "Helvetica Neue", Arial, Verdana, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+
+  --text-xs: 10px;
+  --text-sm: 12px;
+  --text-base: 16px;
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 32px;
+  --text-3xl: 40px;
+  --text-4xl: 48px;
+
+  --leading-body: 1.5;
+  --leading-tight: 1.0;
+  --tracking-display: 0.02em;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  --section-y-desktop: 120px;
+  --section-y-tablet: 80px;
+  --section-y-phone: 56px;
+
+  --radius-sm: 4px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-pill: 32px;
+
+  --elev-flat: none;
+  --elev-ring: 0 0 0 1px var(--border);
+  --elev-raised: none;
+
+  --focus-ring: 0 0 0 2px var(--accent);
+
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  --container-max: 1440px;
+  --container-gutter-desktop: 24px;
+  --container-gutter-tablet: 20px;
+  --container-gutter-phone: 18px;
+
+  --scrim: rgba(0, 0, 0, 0.55);
+  --scrim-strong: rgba(0, 0, 0, 0.78);
+
+  /* OS surfaces — Dynamic Island, lock screen, StandBy, Live Activity.
+     These stay dark in both themes (like the real OS chrome), so they are
+     declared once on :root and never overridden in the light theme. */
+  --os-fg: #f0f0fa;
+  --os-muted: rgba(240, 240, 250, 0.7);
+  --os-line: rgba(240, 240, 250, 0.28);
+  --os-card: #0b0b12;
+  --os-accent: #f0f0fa;
+  --os-on: #000000;
+}
+
+/* ─── light theme: the inversion, not a mirror ─────────────────────── */
+:root[data-theme="light"] {
+  --bg: #FFFFFF;
+  --surface: #FFFFFF;
+  --fg: #0A0A0A;
+  --muted: rgba(10, 10, 10, 0.62);
+  --border: rgba(10, 10, 10, 0.3);
+  --border-soft: rgba(10, 10, 10, 0.1);
+  --accent: #0A0A0A;
+  --accent-on: #FFFFFF;
+  --accent-hover: #2A2A2A;
+  --accent-active: #000000;
+  color-scheme: light;
+}
+
+@font-face { font-family: "D-DIN"; font-weight: 100 900; font-display: swap;
+  src: local("D-DIN"), local("DIN Alternate"), local("Bahnschrift"),
+       url("assets/fonts/saira-var.woff2") format("woff2"); }
+@font-face { font-family: "D-DIN-Bold"; font-weight: 700; font-display: swap;
+  src: local("D-DIN-Bold"), url("assets/fonts/saira-var.woff2") format("woff2"); }
+@font-face { font-family: "D-DIN-Cond"; font-weight: 700; font-display: swap;
+  src: local("D-DIN-Cond"), url("assets/fonts/saira-cond-700.woff2") format("woff2"); }
+
+/* ─── base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-body);
+  font-size: var(--text-base); line-height: var(--leading-body);
+  text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+img, svg { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; cursor: pointer; background: none; border: 0; }
+p, h1, h2, h3 { margin: 0; }
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ─── page shell ───────────────────────────────────────────────────── */
+.page { min-height: 100dvh; display: flex; flex-direction: column; }
+.bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+  width: 100%; max-width: 1180px; margin-inline: auto; padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--border-soft); }
+.bar__mark { font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; }
+.bar__nav { display: flex; gap: var(--space-2); }
+.bar__link { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; padding: 8px 12px; border: 1px solid var(--border-soft); border-radius: var(--radius-pill); }
+.bar__link:hover { color: var(--fg); border-color: var(--border); }
+.toggle { min-height: 40px; padding: 0 18px; border: 1px solid var(--border-soft); border-radius: var(--radius-pill);
+  font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.toggle:hover { color: var(--fg); border-color: var(--border); }
+
+.wrap { width: 100%; max-width: 1180px; margin-inline: auto; padding: var(--space-8) var(--space-6) var(--space-12); }
+.intro { max-width: 62ch; }
+.eyebrow { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.h1 { margin-top: var(--space-3); font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(28px, 5vw, 44px); line-height: 1.05; letter-spacing: 0.01em; text-transform: uppercase; }
+.prose { margin-top: var(--space-4); font-size: 15.5px; line-height: 1.6; color: var(--muted); }
+.prose + .prose { margin-top: var(--space-3); }
+
+/* ─── section rail ─────────────────────────────────────────────────── */
+.sec { margin-top: var(--space-12); }
+.sec__h { display: flex; align-items: baseline; gap: var(--space-4); border-bottom: 1px solid var(--border); padding-bottom: var(--space-3); }
+.sec__t { font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: 0.06em; text-transform: uppercase; }
+.sec__n { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.14em; color: var(--muted); }
+.sec__d { margin-top: var(--space-3); font-size: 14px; color: var(--muted); max-width: 60ch; }
+
+/* ─── tile grid ────────────────────────────────────────────────────── */
+.grid { display: grid; gap: var(--space-6); margin-top: var(--space-6); grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); align-items: start; }
+.tile { border: 1px solid var(--border-soft); border-radius: var(--radius-md); background: color-mix(in oklch, var(--fg) 3%, transparent); padding: var(--space-5); }
+.tile__cap { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-4); }
+.tile__t { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }
+.tile__m { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.tile__d { margin-top: var(--space-4); font-size: 13px; line-height: 1.5; color: var(--muted); }
+.center { display: grid; place-items: center; }
+
+/* ─── OS surface shells ────────────────────────────────────────────── */
+/* Dynamic Island and photography-backed screens are OS surfaces that stay
+   dark in both themes — like the real Dynamic Island and a wallpaper. */
+.os-dark { color: var(--os-fg); }
+
+/* Dynamic Island */
+.island-stage { position: relative; display: grid; place-items: start center; padding: 22px 0 26px;
+  background: color-mix(in oklch, var(--fg) 2%, transparent); border-radius: var(--radius-md); }
+.island-pill { position: relative; display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 14px;
+  background: var(--os-card); border-radius: 999px; color: var(--os-fg); min-width: 116px; justify-content: center; }
+.island-pill .t { font-family: "D-DIN-Cond", var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: 0.02em; }
+.island-pill .bolt { width: 13px; height: 13px; }
+.island-pill .lbl { font-size: 9px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--os-muted); }
+.island-expanded { width: min(100%, 300px); margin-top: 18px; background: var(--os-card); border: 1px solid var(--os-line);
+  border-radius: 22px; padding: 14px 16px; color: var(--os-fg); }
+.island-expanded__top { display: flex; align-items: center; gap: 8px; }
+.island-expanded__top .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--os-accent); }
+.island-expanded__t { flex: 1; font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--os-muted); }
+.island-expanded__d { margin-top: 8px; font-family: "D-DIN-Cond", var(--font-display); font-weight: 700; font-size: 34px; line-height: 1; letter-spacing: 0.01em; }
+.island-expanded__f { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); margin-top: 10px; }
+.island-expanded__f .s { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--os-muted); }
+.island-expanded__f .rule { font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* Lock screen + StandBy photography shells */
+.lock { position: relative; width: 264px; height: 540px; border-radius: 26px; overflow: hidden; border: 1px solid var(--border);
+  background: var(--os-card); container-type: inline-size; }
+.lock img.photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  filter: grayscale(1) brightness(0.45) contrast(1.1); }
+.lock::after { content: ""; position: absolute; inset: 0; background: var(--scrim-strong); }
+.lock__top { position: absolute; top: 0; left: 0; right: 0; z-index: 2; padding: 14px 18px 0; text-align: center; color: var(--os-fg); }
+.lock__time { font-family: "D-DIN-Cond", var(--font-display); font-weight: 700; font-size: 64px; line-height: 1; letter-spacing: 0.01em; }
+.lock__date { margin-top: 2px; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--os-muted); }
+.lock__la { position: absolute; left: 12px; right: 12px; bottom: 58px; z-index: 3; background: var(--os-card);
+  border: 1px solid var(--os-line); border-radius: 16px; padding: 12px 14px; color: var(--os-fg); }
+.lock__la .row-t { display: flex; align-items: center; gap: 7px; font-size: 9.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--os-muted); }
+.lock__la .digits { margin: 8px 0 6px; font-family: "D-DIN-Cond", var(--font-display); font-weight: 700; font-size: 40px; line-height: 1; }
+.lock__la .foot { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.lock__la .foot .s { font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--os-muted); }
+.lock__hint { position: absolute; bottom: 18px; left: 0; right: 0; z-index: 3; text-align: center;
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--os-muted); }
+.standby { display: grid; place-items: center; gap: var(--space-4); padding: var(--space-6) 0; }
+.standby .big { font-family: "D-DIN-Cond", var(--font-display); font-weight: 700; font-size: 54px; line-height: 1; color: var(--os-fg); letter-spacing: 0.01em; }
+.standby .lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--os-muted); }
+
+/* ─── widgets (material inverts with theme) ────────────────────────── */
+.widget-wall { position: relative; padding: var(--space-4); border-radius: var(--radius-md);
+  background: color-mix(in oklch, var(--fg) 2%, transparent); }
+.wg { border: 1px solid var(--border-soft); border-radius: 20px; background: color-mix(in oklch, var(--bg) 92%, var(--fg));
+  padding: 14px; display: flex; flex-direction: column; }
+.wg__t { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.wg__d { font-family: "D-DIN-Cond", var(--font-display); font-weight: 700; font-size: 34px; line-height: 1; letter-spacing: 0.01em; margin-top: 8px; }
+.wg__sub { margin-top: 6px; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.wg__rule { margin-top: 8px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.wg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.wg-small .wg__d { font-size: 26px; }
+.wg-small { grid-row: span 2; justify-content: space-between; }
+.wg-med { grid-column: span 2; }
+.wg-large { grid-column: span 2; }
+.wg-rail { display: flex; gap: 4px; margin-top: 10px; }
+.wg-rail div { flex: 1; text-align: center; }
+.wg-rail .bar2 { height: 22px; border: 1px solid var(--border-soft); border-radius: 2px; display: flex; align-items: flex-end; }
+.wg-rail .bar2 i { display: block; width: 100%; background: color-mix(in oklch, var(--fg) 22%, transparent); }
+.wg-rail div.is-done .bar2 { border-color: transparent; }
+.wg-rail div.is-done .bar2 i { background: color-mix(in oklch, var(--fg) 45%, transparent); }
+.wg-rail div.is-now .bar2 { border-color: var(--fg); }
+.wg-rail div.is-now .bar2 i { background: var(--accent); }
+.wg-rail .d { margin-top: 4px; font-size: 8px; font-weight: 700; letter-spacing: 0.04em; color: var(--muted); }
+.wg-rail div.is-now .d, .wg-rail div.is-done .d { color: var(--fg); }
+.wg-btn { margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 34px; margin-top: 12px; border-radius: 999px; background: var(--accent); color: var(--accent-on);
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+
+/* ─── notifications ────────────────────────────────────────────────── */
+.notif { border: 1px solid var(--border); border-radius: 18px; background: color-mix(in oklch, var(--bg) 94%, var(--fg));
+  padding: 13px 14px; display: flex; gap: 11px; align-items: flex-start; }
+.notif__i { flex: none; width: 26px; height: 26px; border-radius: 8px; background: var(--accent); color: var(--accent-on);
+  display: grid; place-items: center; }
+.notif__b { flex: 1; min-width: 0; }
+.notif__h { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
+.notif__t { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.notif__time { font-size: 9.5px; font-weight: 700; letter-spacing: 0.06em; color: var(--muted); }
+.notif__m { margin-top: 4px; font-size: 13px; line-height: 1.35; }
+.notif__a { display: flex; gap: 16px; margin-top: 10px; }
+.notif__a span { font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+/* ─── action button / shortcuts ────────────────────────────────────── */
+.shortcut { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 56px; padding: 12px 14px;
+  border: 1px solid var(--border-soft); border-radius: var(--radius-md); text-align: left; }
+.shortcut__i { flex: none; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--border);
+  display: grid; place-items: center; }
+.shortcut__b { flex: 1; min-width: 0; }
+.shortcut__t { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.shortcut__d { margin-top: 3px; font-size: 12.5px; color: var(--muted); }
+.shortcut__c { flex: none; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+/* ─── states ───────────────────────────────────────────────────────── */
+.state { border: 1px solid var(--border-soft); border-radius: var(--radius-md); padding: var(--space-5);
+  text-align: center; display: flex; flex-direction: column; align-items: center; min-height: 190px; justify-content: center; }
+.state__i { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border); display: grid; place-items: center; margin-bottom: var(--space-3); }
+.state__t { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.state__d { margin-top: var(--space-2); font-size: 13px; line-height: 1.45; color: var(--muted); max-width: 26ch; }
+.spinner { width: 20px; height: 20px; border: 2px solid var(--border-soft); border-top-color: var(--accent);
+  border-radius: 50%; animation: spin 900ms linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.meterline { width: 100%; max-width: 180px; height: 2px; margin-top: var(--space-4); background: var(--border-soft); }
+.meterline i { display: block; width: 45%; height: 100%; background: var(--accent); animation: sweep 1.4s var(--ease-standard) infinite alternate; }
+@keyframes sweep { from { width: 18%; } to { width: 78%; } }
+@media (prefers-reduced-motion: reduce) { .spinner, .meterline i { animation: none; } .meterline i { width: 55%; } }
+
+@media (max-width: 720px) {
+  .bar { padding: var(--space-3) var(--space-4); }
+  .bar__nav { display: none; }
+  .wrap { padding: var(--space-6) var(--space-4) var(--space-12); }
+  .lock { width: 100%; max-width: 300px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="bar" data-od-id="page-bar">
+    <span class="bar__mark">Quit Smoke</span>
+    <nav class="bar__nav" aria-label="Prototype files">
+      <a class="bar__link" href="index.html">Launcher</a>
+      <a class="bar__link" href="mobile-onboarding.html">Onboarding</a>
+      <a class="bar__link" href="mobile-app.html">App</a>
+    </nav>
+    <button class="toggle" id="theme" data-od-id="theme-toggle" style="width:96px;">Light</button>
+  </div>
+
+  <main class="wrap">
+    <header class="intro" data-od-id="intro">
+      <p class="eyebrow">System surfaces · iOS + Android</p>
+      <h1 class="h1">Where the timer lives<br />outside the app</h1>
+      <p class="prose">The Smoke-Free Timer runs whether or not the app is open, so it has to be legible on the lock screen, in the Dynamic Island, on the home screen and in a notification. Every surface below carries the same number, the same rule and the same one filled action.</p>
+      <p class="prose">Light and dark invert together. Lock-screen, StandBy and Dynamic Island stay dark in both themes because the OS keeps them dark over the wallpaper — the inversion never applies to a photo or the Island.</p>
+    </header>
+
+    <!-- ══ LOCK SCREEN + STANDBY ═════════════════════════════════ -->
+    <section class="sec" data-od-id="sec-lock" aria-labelledby="h-lock">
+      <div class="sec__h"><h2 class="sec__t" id="h-lock">Lock screen &amp; StandBy</h2><span class="sec__n">01</span></div>
+      <p class="sec__d">A Live Activity pinned to the lock screen shows the countdown in condensed instrument numerals, the day's target and the rule. Under Do Not Disturb the timer keeps counting; only the alerts quieten.</p>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
+        <div class="tile" data-od-id="lock-tile">
+          <div class="tile__cap"><span class="tile__t">Lock screen</span><span class="tile__m">Live Activity</span></div>
+          <div class="center">
+            <div class="lock os-dark" data-od-id="lock-screen">
+              <img class="photo" src="assets/photos/pedestrian-street.jpg" width="1000" height="687"
+                   alt="A lone pedestrian on a narrow city street, seen from behind in the evening light" />
+              <div class="lock__top">
+                <p class="lock__time" data-od-id="lock-time">9:41</p>
+                <p class="lock__date">Tuesday, 30 September</p>
+              </div>
+              <div class="lock__la" data-od-id="lock-live-activity">
+                <p class="row-t"><i class="dot" style="width:6px;height:6px;border-radius:50%;background:var(--os-accent);display:inline-block;"></i> Day 3 · timer running</p>
+                <p class="digits" data-od-id="lock-digits">09:00:00</p>
+                <div class="foot">
+                  <span class="s">Target 9 hours</span>
+                  <span class="rule">Timer running → I don't smoke</span>
+                </div>
+              </div>
+              <p class="lock__hint">Long press to open · Action button runs Walk</p>
+            </div>
+          </div>
+          <p class="tile__d">The Activity is the only chrome on the lock screen. Type sits directly on the photograph — no card stack, no second panel.</p>
+        </div>
+
+        <div class="tile" data-od-id="standby-tile">
+          <div class="tile__cap"><span class="tile__t">StandBy</span><span class="tile__m">Ambient</span></div>
+          <div class="center">
+            <div class="standby os-dark" style="width:100%;background:var(--os-card);border:1px solid var(--os-line);border-radius:26px;"
+                 data-od-id="standby-screen">
+              <p class="lbl">Smoke-free · Day 3</p>
+              <p class="big num" data-od-id="standby-digits">09:00:00</p>
+              <p class="lbl">9 hour target · 1:25 left</p>
+            </div>
+          </div>
+          <p class="tile__d">StandBy reduces everything to the countdown and the target, readable from across a room. Punch-in on the timer, no controls.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ DYNAMIC ISLAND ═════════════════════════════════════════ -->
+    <section class="sec" data-od-id="sec-island" aria-labelledby="h-island">
+      <div class="sec__h"><h2 class="sec__t" id="h-island">Dynamic Island</h2><span class="sec__n">02</span></div>
+      <p class="sec__d">Compact shows the timer. Tap-through expands to the countdown, today's target and the same rule — the accent bolt marks the app so the reading is never ambiguous.</p>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
+        <div class="tile" data-od-id="island-compact-tile">
+          <div class="tile__cap"><span class="tile__t">Compact</span><span class="tile__m">Always dark</span></div>
+          <div class="island-stage os-dark" data-od-id="island-compact">
+            <div class="island-pill">
+              <svg class="bolt" viewBox="0 0 22 22" fill="currentColor" aria-hidden="true"><path d="M13.5 2.5 5 11.5h5l-1.5 8 8.5-9h-5Z"/></svg>
+              <span class="t" data-od-id="island-pill-timer">09:00:00</span>
+            </div>
+          </div>
+          <p class="tile__d">One number, no label — the bolt is the app's signature. Tabular so the pill never changes width.</p>
+        </div>
+
+        <div class="tile" data-od-id="island-expanded-tile">
+          <div class="tile__cap"><span class="tile__t">Expanded</span><span class="tile__m">Live Activity</span></div>
+          <div class="island-stage os-dark" data-od-id="island-expanded-stage">
+            <div class="island-expanded">
+              <div class="island-expanded__top">
+                <i class="dot"></i><span class="island-expanded__t">Timer running · Day 3</span>
+              </div>
+              <p class="island-expanded__d num" data-od-id="island-expanded-timer">09:00:00</p>
+              <div class="island-expanded__f">
+                <span class="s">Target 9 hours</span>
+                <span class="rule">→ I don't smoke</span>
+              </div>
+            </div>
+          </div>
+          <p class="tile__d">The expanded card adds the target and the rule. It never adds a second filled button — the tap opens the app, where the craving pill already lives.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ HOME-SCREEN WIDGETS ═════════════════════════════════════ -->
+    <section class="sec" data-od-id="sec-widgets" aria-labelledby="h-widgets">
+      <div class="sec__h"><h2 class="sec__t" id="h-widgets">Home-screen widgets</h2><span class="sec__n">03</span></div>
+      <p class="sec__d">Three sizes, free on both platforms. Each is a readout, not a control — tapping any of them opens the app on the matching screen. Widget material follows the system theme, so it inverts with the page.</p>
+      <div class="tile" data-od-id="widget-tile">
+        <div class="widget-wall">
+          <div class="wg-grid">
+            <!-- small: the timer -->
+            <div class="wg wg-small" data-od-id="widget-small">
+              <p class="wg__t">Smoke-free timer</p>
+              <p class="wg__d num" data-od-id="widget-small-timer">09:00:00</p>
+              <p class="wg__sub">Day 3 · 9 hour target</p>
+              <p class="wg__rule">Timer running →<br />I don't smoke</p>
+            </div>
+            <!-- medium: the week -->
+            <div class="wg wg-med" data-od-id="widget-medium">
+              <p class="wg__t">The seven days</p>
+              <div class="wg-rail" data-od-id="widget-week" aria-label="Seven-day ramp, day three of seven">
+                <div><div class="bar2"><i style="height:100%"></i></div><p class="d">D1</p></div>
+                <div><div class="bar2"><i style="height:100%"></i></div><p class="d">D2</p></div>
+                <div class="is-now"><div class="bar2"><i style="height:26%"></i></div><p class="d">D3</p></div>
+                <div><div class="bar2"><i style="height:8%"></i></div><p class="d">D4</p></div>
+                <div><div class="bar2"><i style="height:8%"></i></div><p class="d">D5</p></div>
+                <div><div class="bar2"><i style="height:8%"></i></div><p class="d">D6</p></div>
+                <div><div class="bar2"><i style="height:8%"></i></div><p class="d">D7</p></div>
+              </div>
+            </div>
+            <!-- large: timer + progress + money -->
+            <div class="wg wg-large" data-od-id="widget-large">
+              <p class="wg__t">Quit Smoke</p>
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-top:6px;">
+                <p class="wg__d num" style="margin-top:0;" data-od-id="widget-large-timer">09:00:00</p>
+                <p class="wg__sub" style="margin-bottom:4px;">$36.00 saved</p>
+              </div>
+              <div class="wg-rail" style="margin-top:12px;">
+                <div><div class="bar2"><i style="height:100%"></i></div><p class="d">D1</p></div>
+                <div><div class="bar2"><i style="height:100%"></i></div><p class="d">D2</p></div>
+                <div class="is-now"><div class="bar2"><i style="height:26%"></i></div><p class="d">D3</p></div>
+                <div><div class="bar2"><i style="height:8%"></i></div><p class="d">D4</p></div>
+                <div><div class="bar2"><i style="height:8%"></i></div><p class="d">D5</p></div>
+                <div><div class="bar2"><i style="height:8%"></i></div><p class="d">D6</p></div>
+                <div><div class="bar2"><i style="height:8%"></i></div><p class="d">D7</p></div>
+              </div>
+              <div class="wg-btn" data-od-id="widget-craving-cta">
+                <svg width="12" height="12" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 2.5 5 11.5h5l-1.5 8 8.5-9h-5Z"/></svg>
+                I have a craving
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="tile__d">The large widget carries the only filled element on the home screen — the same craving action as the tab bar, so the routine is one tap from anywhere.</p>
+      </div>
+    </section>
+
+    <!-- ══ NOTIFICATIONS ═══════════════════════════════════════════ -->
+    <section class="sec" data-od-id="sec-notifications" aria-labelledby="h-notifications">
+      <div class="sec__h"><h2 class="sec__t" id="h-notifications">Notifications</h2><span class="sec__n">04</span></div>
+      <p class="sec__d">Two kinds only: a target-unlocked moment, and a zone nudge. Both are non-judgemental, both are actionable, and a slip never produces a notification — the timer simply keeps running.</p>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
+        <div class="tile" data-od-id="notif-target-tile">
+          <div class="tile__cap"><span class="tile__t">Target unlocked</span><span class="tile__m">10:00</span></div>
+          <div class="notif" data-od-id="notif-target">
+            <span class="notif__i" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 4.5 4.5L18 6"/></svg></span>
+            <span class="notif__b">
+              <span class="notif__h"><span class="notif__t">Quit Smoke</span><span class="notif__time">now</span></span>
+              <span class="notif__m">Nine hours done. The timer runs to twelve next.</span>
+              <span class="notif__a"><span>Open</span><span>Not now</span></span>
+            </span>
+          </div>
+          <p class="tile__d">Sent when the day's target completes, never before. The copy states the next number instead of congratulating.</p>
+        </div>
+
+        <div class="tile" data-od-id="notif-zone-tile">
+          <div class="tile__cap"><span class="tile__t">Trigger zone</span><span class="tile__m">11:40</span></div>
+          <div class="notif" data-od-id="notif-zone">
+            <span class="notif__i" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3 19 18H3Z"/><path d="M11 9v3.4M11 14.4v.1"/></svg></span>
+            <span class="notif__b">
+              <span class="notif__h"><span class="notif__t">Quit Smoke</span><span class="notif__time">now</span></span>
+              <span class="notif__m">You are near the corner store. Timer still running.</span>
+              <span class="notif__a"><span>Walk</span><span>Dismiss</span></span>
+            </span>
+          </div>
+          <p class="tile__d">A zone nudge offers the routine, not a warning. "Walk" jumps straight into Craving Escape, step one.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ ACTION BUTTON + SHORTCUTS ═══════════════════════════════ -->
+    <section class="sec" data-od-id="sec-shortcuts" aria-labelledby="h-shortcuts">
+      <div class="sec__h"><h2 class="sec__t" id="h-shortcuts">Action button &amp; shortcuts</h2><span class="sec__n">05</span></div>
+      <p class="sec__d">A long press of the Action button, or a Quick Settings shortcut, starts the routine without unlocking and without opening the app. One shortcut, one behaviour.</p>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
+        <div class="tile" data-od-id="shortcut-tile">
+          <div class="tile__cap"><span class="tile__t">Quick Settings</span><span class="tile__m">One tile</span></div>
+          <div class="stack" style="display:grid;gap:10px;">
+            <div class="shortcut" data-od-id="shortcut-walk">
+              <span class="shortcut__i" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13.5 2.5 5 11.5h5l-1.5 8 8.5-9h-5Z"/></svg></span>
+              <span class="shortcut__b"><span class="shortcut__t">I have a craving</span><span class="shortcut__d">Start Walk → Breathe</span></span>
+              <span class="shortcut__c">Press</span>
+            </div>
+            <div class="shortcut" data-od-id="shortcut-status">
+              <span class="shortcut__i" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M11 6.5V11l3 2"/></svg></span>
+              <span class="shortcut__b"><span class="shortcut__t">Timer status</span><span class="shortcut__d">Reads today's remaining time</span></span>
+              <span class="shortcut__c">Press</span>
+            </div>
+          </div>
+          <p class="tile__d">The craving tile is the only one with a fill. "Timer status" is a readout shortcut for the lock screen.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ STATES ══════════════════════════════════════════════════ -->
+    <section class="sec" data-od-id="sec-states" aria-labelledby="h-states">
+      <div class="sec__h"><h2 class="sec__t" id="h-states">Empty · Loading · Success</h2><span class="sec__n">06</span></div>
+      <p class="sec__d">Designed, not implied. Empty is calm and offers one next step; loading uses the 2px meter, never a spinner over content; success confirms and returns.</p>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
+        <div class="state" data-od-id="state-empty">
+          <span class="state__i" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M11 7.2v4M11 14.4v.1"/></svg></span>
+          <p class="state__t">No trigger zones</p>
+          <p class="state__d">Add the places where you usually buy. A nudge arrives when you walk into one.</p>
+          <div class="wg-btn" style="margin-top:14px;padding:0 16px;">Add a zone</div>
+        </div>
+        <div class="state" data-od-id="state-loading">
+          <span class="spinner" aria-hidden="true"></span>
+          <p class="state__t" style="margin-top:12px;">Loading today's timer</p>
+          <p class="state__d">A hairline meter, so the layout never jumps when the number lands.</p>
+          <div class="meterline" aria-hidden="true"><i></i></div>
+        </div>
+        <div class="state" data-od-id="state-success">
+          <span class="state__i" style="background:var(--accent);color:var(--accent-on);border-color:transparent;" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 12 4.5 4.5L18 6"/></svg></span>
+          <p class="state__t">Zone saved</p>
+          <p class="state__d">The corner store is on. You will be nudged inside 250 m.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(() => {
+  const root = document.documentElement;
+  const $ = s => document.querySelector(s);
+
+  /* ── theme: light / dark inversion, persisted, system-aware ──────── */
+  const mq = matchMedia('(prefers-color-scheme: light)');
+  let theme = 'dark';
+  try { theme = localStorage.getItem('qs.surfaces.theme') || 'dark'; } catch (e) {}
+  const paint = () => {
+    const t = theme === 'auto' ? (mq.matches ? 'light' : 'dark') : theme;
+    root.dataset.theme = t;
+    $('#theme').textContent = t === 'dark' ? 'Light' : 'Dark';
+  };
+  mq.addEventListener('change', () => { if (theme === 'auto') paint(); });
+  $('#theme').addEventListener('click', () => {
+    theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    paint();
+    try { localStorage.setItem('qs.surfaces.theme', theme); } catch (e) {}
+  });
+  paint();
+})();
+</script>
+</body>
+</html>

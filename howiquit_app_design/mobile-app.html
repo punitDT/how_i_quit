@@ -1,0 +1,2147 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="dark light" />
+<title>Quit Smoke — App</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   DESIGN-SYSTEM TOKENS — design-systems/spacex/tokens.css (verbatim)
+   ═══════════════════════════════════════════════════════════════════════ */
+:root {
+  --bg: #000000;
+  --surface: #000000;
+  --surface-warm: var(--surface);
+
+  --fg: #f0f0fa;
+  --fg-2: var(--fg);
+  --muted: rgba(240, 240, 250, 0.7);
+  --meta: var(--muted);
+
+  --border: rgba(240, 240, 250, 0.35);
+  --border-soft: rgba(240, 240, 250, 0.1);
+
+  --accent: #f0f0fa;
+  --accent-on: #000000;
+  --accent-hover: #ffffff;
+  --accent-active: #d8d8e6;
+
+  --success: #16a34a;
+  --warn: #eab308;
+  --danger: #dc2626;
+
+  --font-display: "D-DIN-Bold", "D-DIN", "DIN Alternate", "Helvetica Neue", Arial, Verdana, sans-serif;
+  --font-body: "D-DIN", "DIN Alternate", "Helvetica Neue", Arial, Verdana, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+
+  --text-xs: 10px;
+  --text-sm: 12px;
+  --text-base: 16px;
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 32px;
+  --text-3xl: 40px;
+  --text-4xl: 48px;
+
+  --leading-body: 1.5;
+  --leading-tight: 1.0;
+  --tracking-display: 0.02em;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  --section-y-desktop: 120px;
+  --section-y-tablet: 80px;
+  --section-y-phone: 56px;
+
+  --radius-sm: 4px;
+  --radius-md: 4px;
+  --radius-lg: 4px;
+  --radius-pill: 32px;
+
+  --elev-flat: none;
+  --elev-ring: 0 0 0 1px var(--border);
+  --elev-raised: none;
+
+  --focus-ring: 0 0 0 2px var(--accent);
+
+  --motion-fast: 150ms;
+  --motion-base: 200ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  --container-max: 1440px;
+  --container-gutter-desktop: 24px;
+  --container-gutter-tablet: 20px;
+  --container-gutter-phone: 18px;
+
+  --scrim: rgba(0, 0, 0, 0.55);
+  --scrim-strong: rgba(0, 0, 0, 0.78);
+}
+
+/* ─── light theme: the inversion, not a mirror ─────────────────────── */
+:root[data-theme="light"] {
+  --bg: #FFFFFF;
+  --surface: #FFFFFF;
+  --fg: #0A0A0A;
+  --muted: rgba(10, 10, 10, 0.62);
+  --border: rgba(10, 10, 10, 0.3);
+  --border-soft: rgba(10, 10, 10, 0.1);
+  --accent: #0A0A0A;
+  --accent-on: #FFFFFF;
+  --accent-hover: #2A2A2A;
+  --accent-active: #000000;
+  color-scheme: light;
+}
+
+@font-face { font-family: "D-DIN"; font-weight: 100 900; font-display: swap;
+  src: local("D-DIN"), local("DIN Alternate"), local("Bahnschrift"),
+       url("assets/fonts/saira-var.woff2") format("woff2"); }
+@font-face { font-family: "D-DIN-Bold"; font-weight: 700; font-display: swap;
+  src: local("D-DIN-Bold"), url("assets/fonts/saira-var.woff2") format("woff2"); }
+@font-face { font-family: "D-DIN-Cond"; font-weight: 700; font-display: swap;
+  src: local("D-DIN-Cond"), url("assets/fonts/saira-cond-700.woff2") format("woff2"); }
+
+/* ─── base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font-body);
+  font-size: var(--text-base); line-height: var(--leading-body);
+  text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+img, svg { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; cursor: pointer; background: none; border: 0; }
+p, h1, h2, h3 { margin: 0; }
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+/* Components below set display, which beats the UA [hidden] rule on its own.
+   Without this, .hidden = true silently does nothing to a .row or .tabbar. */
+[hidden] { display: none !important; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ─── page stage ───────────────────────────────────────────────────── */
+.page { min-height: 100dvh; display: flex; flex-direction: column; }
+.bar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4);
+  width: 100%; max-width: 1180px; margin-inline: auto; padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--border-soft); }
+.bar__mark { font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; }
+.bar__nav { display: flex; gap: var(--space-2); }
+.bar__link { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; padding: 8px 12px; border: 1px solid var(--border-soft); border-radius: var(--radius-pill); }
+.bar__link:hover { color: var(--fg); border-color: var(--border); }
+.deck { flex: 1; display: grid; place-items: center; padding: var(--space-8) var(--space-4); }
+.device { container-type: inline-size; width: 390px; height: 844px; position: relative;
+  border: 1px solid var(--border); border-radius: 44px; background: var(--bg); overflow: hidden;
+  display: flex; flex-direction: column; }
+.device__glare { position: absolute; inset: 0; pointer-events: none; z-index: 6; border-radius: inherit;
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--fg) 6%, transparent); }
+.notch { flex: none; height: 26px; display: grid; place-items: center; }
+.notch span { width: 108px; height: 26px; border-radius: 14px; background: var(--fg); opacity: 0.9; }
+.status { flex: none; display: flex; align-items: center; justify-content: space-between; height: 44px;
+  padding: 0 30px; font-size: var(--text-sm); font-weight: 700; letter-spacing: 0.04em; }
+.status__icons { display: flex; align-items: center; gap: 5px; }
+.app { flex: 1; min-height: 0; display: flex; flex-direction: column; position: relative; }
+
+/* ─── views ────────────────────────────────────────────────────────── */
+.view { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.view[hidden] { display: none; }
+.view.is-on { animation: fade var(--motion-base) var(--ease-standard) both; }
+@keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .view.is-on { animation: none; } }
+
+.topbar { flex: none; display: flex; align-items: center; gap: var(--space-2); min-height: 48px; padding: var(--space-2) var(--space-4); }
+.topbar__t { flex: 1; min-width: 0; font-size: var(--text-sm); font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; }
+.topbar__x { font-size: var(--text-xs); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.topbar__g { flex: none; min-height: 44px; padding: 0 14px; display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--border-soft); border-radius: var(--radius-pill);
+  font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  transition: color var(--motion-fast), border-color var(--motion-fast); }
+.topbar__g svg { width: 15px; height: 15px; }
+.topbar__g:hover { color: var(--fg); border-color: var(--border); }
+
+/* ─── guide dialog content ──────────────────────────────────────────── */
+.guide { margin-top: var(--space-3); }
+.guide[hidden] { display: none; }
+.guide__w { font-size: 14px; line-height: 1.5; color: var(--fg); }
+.guide__s { font-size: 13.5px; line-height: 1.5; color: var(--muted); margin-top: 6px; }
+.guide__l { margin-top: var(--space-3); border-top: 1px solid var(--border-soft); }
+.guide__n { display: flex; gap: var(--space-3); align-items: flex-start; padding: 9px 0;
+  border-bottom: 1px solid var(--border-soft); font-size: 13.5px; line-height: 1.45; color: var(--muted); }
+.guide__n:last-child { border-bottom: 0; padding-bottom: 0; }
+.guide__i { flex: none; width: 18px; height: 18px; margin-top: 1px; border-radius: 50%;
+  border: 1px solid var(--border); display: grid; place-items: center;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700; color: var(--fg); }
+.icon-btn { width: 44px; height: 44px; flex: none; display: grid; place-items: center; border-radius: var(--radius-pill); color: var(--muted); }
+.icon-btn:hover { color: var(--fg); background: color-mix(in oklch, var(--fg) 8%, transparent); }
+
+.body { flex: 1; min-height: 0; overflow-y: auto; padding: var(--space-3) var(--space-4) var(--space-6); scrollbar-width: none; position: relative; z-index: 1; }
+.body::-webkit-scrollbar { display: none; }
+.foot { flex: none; padding: var(--space-3) var(--space-4) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--border-soft); display: grid; gap: var(--space-2); position: relative; z-index: 2; background: var(--bg); }
+
+/* ─── type ─────────────────────────────────────────────────────────── */
+.eyebrow { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.t { font-family: var(--font-display); font-weight: 700; font-size: clamp(23px, 6.6cqi, 28px);
+  line-height: 1.06; letter-spacing: 0.005em; text-transform: uppercase; }
+.prose { font-size: 14.5px; line-height: 1.6; color: var(--muted); }
+.sec { margin-top: var(--space-5); }
+.sec__l { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: var(--space-2); }
+
+/* ─── cards: one hairline level, then rows ─────────────────────────── */
+.card { border: 1px solid var(--border-soft); border-radius: var(--radius-md); background: color-mix(in oklch, var(--fg) 3%, transparent); }
+.card--line { border-color: var(--border); background: none; }
+.rows { border-top: 1px solid var(--border-soft); }
+.row { display: flex; align-items: center; gap: var(--space-3); width: 100%; min-height: 56px;
+  padding: var(--space-3) 0; border-bottom: 1px solid var(--border-soft); text-align: left; }
+.row__b { flex: 1; min-width: 0; }
+.row__t { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.row__d { font-size: 13.5px; line-height: 1.45; color: var(--muted); margin-top: 3px; }
+.row__v { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.row__n { flex: none; width: 20px; font-size: var(--text-xs); font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+.row--tap:hover .row__t, .row--tap:hover .row__x { color: var(--accent); }
+.row--tap:hover .row__b { color: var(--muted); }
+.row__x { color: var(--muted); }
+button.row { transition: color var(--motion-fast) var(--ease-standard); }
+
+/* ─── the flourish: the running timer ──────────────────────────────── */
+.hero { padding: var(--space-4); }
+.hero__top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.hero__state { display: flex; align-items: center; gap: 7px; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.dot--run { animation: pulse 2.4s var(--ease-standard) infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.32; } }
+@media (prefers-reduced-motion: reduce) { .dot--run { animation: none; } }
+.digits { font-family: "D-DIN-Cond", var(--font-display); font-weight: 700; font-variant-numeric: tabular-nums;
+  font-size: clamp(50px, 19cqi, 76px); line-height: 1; letter-spacing: 0.01em; margin: var(--space-4) 0 var(--space-3);
+  min-height: 1em; }
+.meter { height: 2px; background: var(--border-soft); }
+.meter i { display: block; height: 100%; background: var(--accent); transition: width 1s linear; }
+.hero__foot { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); margin-top: var(--space-3); }
+.hero__l { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.hero__r { font-size: var(--text-xs); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-variant-numeric: tabular-nums; }
+/* the seven days sit inside the timer card, so the ramp reads as part of the
+   hold rather than a separate section. The roadmap is the hero's own block,
+   so the locked-state blur is deliberately not applied to it. */
+.hero__week { margin-top: var(--space-4); padding-top: var(--space-3); border-top: 1px solid var(--border-soft); }
+.hero__weekl { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: var(--space-3); }
+/* the timer's one action lives with the timer, under the ramp it acts on */
+.hero__cta { margin-top: var(--space-4); }
+
+/* ─── progress hero ─────────────────────────────────────────────────
+   The ramp is seven discrete days, so it is drawn as seven segments
+   rather than a continuous bar, and it reuses the Home rail's three
+   states so both screens read the same progress language. */
+.pgh__n { font-family: "D-DIN-Cond", var(--font-display); font-weight: 700; font-variant-numeric: tabular-nums;
+  font-size: clamp(52px, 21cqi, 80px); line-height: 0.88; letter-spacing: 0.01em; color: var(--fg); margin: 10px 0 0; }
+.pgh__u { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--muted); margin-top: 8px; }
+.pgh__steps { display: flex; gap: 4px; margin-top: 16px; }
+.pgh__steps i { flex: 1; height: 6px; border: 1px solid var(--border-soft); border-radius: 1px;
+  background: color-mix(in oklch, var(--fg) 22%, transparent); }
+.pgh__steps i.is-done { border-color: transparent; background: color-mix(in oklch, var(--fg) 45%, transparent); }
+.pgh__steps i.is-now { border-color: var(--fg); background: var(--accent); }
+/* the hours held today are the hero's secondary fact, so they lead the foot */
+.pgh__foot .hero__l { color: var(--fg); }
+.rule-line { border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4);
+  font-family: var(--font-display); font-weight: 700; font-size: 14.5px; line-height: 1.3;
+  letter-spacing: 0.03em; text-transform: uppercase; }
+
+/* ─── the three rules: a contract, not a table row ──────────────────── */
+.rules { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.rule { display: grid; grid-template-columns: 30px 1fr; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-3);
+  border: 1px solid var(--border-soft); border-radius: var(--radius-md); }
+.rule__n { align-self: stretch; display: flex; align-items: center; justify-content: flex-end;
+  border-right: 1px solid var(--border-soft); padding-right: var(--space-3);
+  font-family: var(--font-display); font-weight: 700; font-size: var(--text-xs);
+  letter-spacing: 0.08em; color: var(--muted); font-variant-numeric: tabular-nums; }
+.rule__t { font-family: var(--font-display); font-weight: 700; font-size: 13.5px; line-height: 1.35;
+  letter-spacing: 0.04em; text-transform: uppercase; color: var(--fg); }
+
+/* ─── what the plan adds: only what it actually adds ────────────────── */
+.adds > div { padding-bottom: var(--space-3); border-bottom: 1px solid var(--border-soft); }
+.adds > div:last-child { padding-bottom: 0; border-bottom: 0; }
+.adds__k { font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--fg); }
+.adds__l { display: grid; grid-template-columns: 40px 1fr; gap: var(--space-2); align-items: baseline;
+  margin-top: 6px; font-size: 13.5px; line-height: 1.45; }
+.adds__tag { font-family: var(--font-display); font-size: var(--text-xs); font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; }
+.adds__l--f { color: var(--muted); }
+.adds__l--p { color: var(--fg); }
+
+/* ─── 7-day rail ───────────────────────────────────────────────────── */
+.rail7 { display: flex; gap: 4px; padding-top: 6px; }
+.rail7 div { flex: 1; text-align: center; }
+.rail7 .bar2 { height: 26px; border: 1px solid var(--border-soft); border-radius: 2px; display: flex; align-items: flex-end; }
+.rail7 .bar2 i { display: block; width: 100%; background: color-mix(in oklch, var(--fg) 22%, transparent); }
+.rail7 div.is-done .bar2 { border-color: transparent; }
+.rail7 div.is-done .bar2 i { background: color-mix(in oklch, var(--fg) 45%, transparent); }
+.rail7 div.is-now .bar2 { border-color: var(--fg); }
+.rail7 div.is-now .bar2 i { background: var(--accent); }
+.rail7 .d { margin-top: 5px; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; color: var(--muted); font-variant-numeric: tabular-nums; }
+.rail7 div.is-now .d, .rail7 div.is-done .d { color: var(--fg); }
+.rail7 .m { font-size: 9.5px; letter-spacing: 0.02em; color: var(--muted); font-variant-numeric: tabular-nums; }
+/* eighth column: after Day 7 the hold never ends, so it rises past the top of
+   the rail, keeps its edge, and is split off by a hairline. The rail carries a
+   few px of headroom above so the taller bar has somewhere to go — its height
+   is pulled back out of the flow so the day labels stay on one row.
+   the gap and the hairline offset are 4px, the same values the onboarding ramp
+   uses, so the space on either side of Day 07 is identical on both screens */
+.rail7 div.is-cont { margin-left: 4px; border-left: 1px solid var(--border-soft); padding-left: 4px; }
+.rail7 div.is-cont .bar2 { height: 32px; margin-top: -6px; }
+.rail7 div.is-on .bar2 { border-color: var(--fg); }
+.rail7 div.is-on .bar2 i { background: color-mix(in oklch, var(--fg) 45%, transparent); }
+.rail7 div.is-on .d { color: var(--fg); }
+
+/* ─── stats ────────────────────────────────────────────────────────── */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; }
+.grid2 > div { padding: var(--space-4); }
+.grid2 > div:nth-child(odd) { border-right: 1px solid var(--border-soft); }
+.grid2 > div:nth-child(n+3) { border-top: 1px solid var(--border-soft); }
+.stat__v { font-family: var(--font-display); font-weight: 700; font-size: 27px; line-height: 1; letter-spacing: 0.01em; font-variant-numeric: tabular-nums; }
+.stat__l { margin-top: 7px; font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--muted); }
+
+/* ─── bar chart: filled encoding ───────────────────────────────────── */
+.chart { display: flex; align-items: flex-end; gap: 6px; height: 108px; padding: var(--space-4) var(--space-4) 0; }
+.chart div { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; }
+.chart .v { font-size: 9.5px; text-align: center; color: var(--muted); margin-bottom: 4px; font-variant-numeric: tabular-nums; }
+.chart .f { background: color-mix(in oklch, var(--fg) 30%, transparent); border-radius: 2px 2px 0 0; min-height: 3px; }
+.chart div.is-max .f { background: var(--accent); }
+.chart div.is-now .v { color: var(--fg); }
+.xaxis { display: flex; gap: 6px; padding: 6px var(--space-4) var(--space-4); }
+.xaxis div { flex: 1; text-align: center; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: var(--muted); }
+.xaxis div.is-now { color: var(--fg); }
+
+/* ─── tab bar: one filled accent lives here ────────────────────────── */
+.tabbar { flex: none; display: grid; grid-template-columns: 1fr 1fr auto 1fr 1fr; align-items: center; gap: 2px;
+  padding: 8px 10px calc(10px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--border-soft); background: var(--bg); }
+.tab { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 4px 2px; min-height: 50px;
+  color: var(--muted); border-radius: var(--radius-md); transition: color var(--motion-fast) var(--ease-standard); }
+.tab:hover { color: var(--fg); }
+.tab[aria-current="page"] { color: var(--fg); }
+.tab span { font-size: 8.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.tab--craving { flex-direction: row; gap: 6px; padding: 12px 14px; border-radius: var(--radius-pill);
+  background: var(--accent); color: var(--accent-on); min-height: 44px; }
+.tab--craving span { font-size: 9px; letter-spacing: 0.1em; }
+.tab--craving:hover { background: var(--accent-hover); }
+
+/* ─── buttons ──────────────────────────────────────────────────────── */
+.cta { min-height: 54px; width: 100%; border-radius: var(--radius-pill); background: var(--accent); color: var(--accent-on);
+  font-family: var(--font-display); font-weight: 700; font-size: 12.5px; letter-spacing: 0.16em; text-transform: uppercase;
+  display: flex; align-items: center; justify-content: center; gap: var(--space-2);
+  transition: background var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), transform 60ms var(--ease-standard); }
+.cta:hover { background: var(--accent-hover); }
+.cta:active { background: var(--accent-active); transform: translateY(1px); }
+.cta--ghost { background: none; color: var(--muted); border: 1px solid var(--border-soft); min-height: 48px; font-size: 12px; }
+.cta--ghost:hover { color: var(--fg); border-color: var(--fg); background: none; }
+/* the pressed fill is the light end of the ramp, so the label has to invert with it */
+.cta--ghost:active { color: var(--accent-on); background: var(--accent-active); border-color: var(--accent-active); }
+.cta--sm { min-height: 44px; font-size: 11px; }
+/* two-line primary CTA: the action on the first line, the money it keeps on the
+   line under it. The second line dims the accent-on foreground rather than the
+   fill, so contrast never drops, and the 54px minimum still governs the height,
+   so the card below does not move when the figure appears. */
+.cta--stack { flex-direction: column; gap: 2px; padding-block: 9px; text-align: center; }
+.cta__sub { font-family: var(--font-body); font-weight: 400; font-size: 9.5px; letter-spacing: 0.14em; color: color-mix(in oklch, var(--accent-on) 78%, transparent); }
+/* sign-in: one screen, and the two providers are the whole of it */
+.auth { display: grid; gap: var(--space-2); }
+.brandmark { flex: none; width: 16px; height: 16px; }
+
+/* ─── segmented ────────────────────────────────────────────────────── */
+.seg { display: flex; gap: 6px; }
+.seg button { flex: 1; min-height: 44px; border: 1px solid var(--border-soft); border-radius: var(--radius-pill);
+  font-size: var(--text-sm); font-weight: 700; letter-spacing: 0.1em; color: var(--muted);
+  transition: color var(--motion-fast), border-color var(--motion-fast), background var(--motion-fast); }
+.seg button:hover { color: var(--fg); border-color: var(--border); }
+.seg button[aria-pressed="true"] { color: var(--fg); border-color: var(--fg); background: color-mix(in oklch, var(--fg) 8%, transparent); }
+
+/* ─── slot grid ────────────────────────────────────────────────────── */
+.slotgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.slotgrid button { min-height: 44px; border: 1px solid var(--border-soft); border-radius: var(--radius-pill);
+  font-size: var(--text-sm); font-weight: 700; letter-spacing: 0.1em; color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  transition: color var(--motion-fast), border-color var(--motion-fast), background var(--motion-fast); }
+.slotgrid button:hover { color: var(--fg); border-color: var(--border); }
+.slotgrid button[aria-pressed="true"] { color: var(--fg); border-color: var(--fg); background: color-mix(in oklch, var(--fg) 8%, transparent); }
+
+/* the ramp, drawn as a staircase */
+.stair { display: flex; gap: 4px; }
+.stair > div { flex: 1; text-align: center; }
+.stair .st { height: 92px; border: 1px solid var(--border-soft); border-radius: 2px; display: flex; align-items: flex-end; }
+.stair .st i { display: block; width: 100%; background: color-mix(in oklch, var(--fg) 22%, transparent); }
+.stair > div.is-done .st { border-color: transparent; }
+.stair > div.is-done .st i { background: color-mix(in oklch, var(--fg) 45%, transparent); }
+.stair > div.is-now .st { border-color: var(--fg); }
+.stair > div.is-now .st i { background: var(--accent); }
+.stair .d { margin-top: 6px; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; color: var(--muted); font-variant-numeric: tabular-nums; }
+.stair > div.is-now .d, .stair > div.is-done .d { color: var(--fg); }
+.stair .m { font-size: 9.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.stair > div.is-now .m { color: var(--fg); }
+.stair__tail { margin-top: 8px; border: 1px solid var(--border-soft); border-radius: 2px;
+  padding: 8px 10px; display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
+.stair__tail b { font-size: 9.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.stair__tail span { font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+
+/* slots, set to the half hour */
+.slotrows { border-top: 1px solid var(--border-soft); }
+.slotrow { padding: var(--space-3) 0; border-bottom: 1px solid var(--border-soft); }
+.slotrow:last-child { border-bottom: 0; }
+.slotrow__h { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); }
+.slotrow__n { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.slotrow__t { font-size: 13px; color: var(--fg); font-variant-numeric: tabular-nums; }
+.slotrow__c { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-top: var(--space-2); }
+.step2 { display: flex; align-items: center; gap: 6px; }
+.step2 button { width: 44px; height: 44px; border: 1px solid var(--border-soft); border-radius: var(--radius-pill);
+  font-size: 18px; line-height: 1; color: var(--muted); transition: color var(--motion-fast), border-color var(--motion-fast), background var(--motion-fast); }
+.step2 button:hover { color: var(--fg); border-color: var(--border); background: color-mix(in oklch, var(--fg) 8%, transparent); }
+.step2 button:disabled { opacity: 0.4; }
+.step2 .step2__v { min-width: 62px; text-align: center; font-size: 13px; font-variant-numeric: tabular-nums; }
+/* ─── plan picker: the two lengths, priced, with the one picked filled ── */
+.plan { display: grid; gap: var(--space-2); }
+.plan button { display: flex; align-items: center; gap: var(--space-3); width: 100%; min-height: 68px; text-align: left; padding: var(--space-3) var(--space-4); border: 1px solid var(--border-soft); border-radius: var(--radius-md); transition: border-color var(--motion-fast) var(--ease-standard), background var(--motion-fast) var(--ease-standard); }
+.plan button:hover { border-color: var(--border); background: color-mix(in oklch, var(--fg) 5%, transparent); }
+.plan button[aria-pressed="true"] { border-color: var(--fg); }
+.plan__tick { flex: none; width: 18px; height: 18px; border: 1px solid var(--border); border-radius: 50%; }
+.plan button[aria-pressed="true"] .plan__tick { border: 5px solid var(--accent); }
+.plan__b { flex: 1; min-width: 0; }
+.plan__t { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+
+.plan__p { font-family: var(--font-display); font-weight: 700; font-size: 22px; font-variant-numeric: tabular-nums; }
+
+.seg--mini { flex: 1 1 148px; }
+.seg--mini button { min-height: 44px; font-size: 10px; letter-spacing: 0.06em; padding: 0 2px; }
+
+/* ─── switch ───────────────────────────────────────────────────────── */
+.sw { flex: none; width: 46px; height: 28px; border-radius: var(--radius-pill); border: 1px solid var(--border);
+  position: relative; background: none; transition: background var(--motion-fast) var(--ease-standard), border-color var(--motion-fast); }
+.sw i { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--muted); transition: transform var(--motion-base) var(--ease-standard), background var(--motion-fast); }
+.sw[aria-checked="true"] { background: var(--accent); border-color: var(--accent); }
+.sw[aria-checked="true"] i { transform: translateX(18px); background: var(--accent-on); }
+
+/* ─── inputs ───────────────────────────────────────────────────────── */
+.field { padding: var(--space-3) 0; }
+.field__l { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.stepper { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+.stepper button { width: 44px; height: 44px; border: 1px solid var(--border); border-radius: var(--radius-pill);
+  display: grid; place-items: center; color: var(--fg); transition: background var(--motion-fast), border-color var(--motion-fast); }
+.stepper button:hover { background: color-mix(in oklch, var(--fg) 10%, transparent); border-color: var(--fg); }
+.stepper b { font-family: var(--font-display); font-weight: 700; font-size: 26px; font-variant-numeric: tabular-nums; }
+.money { display: flex; align-items: center; gap: var(--space-2); border-bottom: 1px solid var(--border); margin-top: 4px; }
+.money span { color: var(--muted); }
+.money input { flex: 1; min-width: 0; background: none; border: 0; color: var(--fg); font-family: var(--font-display);
+  font-weight: 700; font-size: 20px; padding: 8px 0; font-variant-numeric: tabular-nums; }
+.money input:focus-visible { outline: none; }
+.money:focus-within { border-color: var(--fg); }
+select.pick { width: 100%; min-height: 48px; padding: 0 var(--space-2); color: var(--fg); background: none;
+  border: 1px solid var(--border-soft); border-radius: var(--radius-md); font-size: 15px; }
+
+/* ─── ring timer ───────────────────────────────────────────────────── */
+.ring-wrap { position: relative; width: min(74cqi, 244px); aspect-ratio: 1; margin: var(--space-2) auto; }
+.ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring__t, .ring__p { fill: none; stroke-width: 2; }
+.ring__t { stroke: var(--border-soft); }
+.ring__p { stroke: var(--accent); transition: stroke-dashoffset 1s linear; }
+.ring-mid { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; }
+.ring-num { font-family: "D-DIN-Cond", var(--font-display); font-weight: 700; font-variant-numeric: tabular-nums;
+  font-size: clamp(38px, 14cqi, 52px); line-height: 1; letter-spacing: 0.01em; }
+.ring-sub { font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; border: 0; }
+.cue { text-align: center; font-size: 14.5px; line-height: 1.5; color: var(--muted); max-width: 26ch; margin: var(--space-2) auto 0; }
+
+/* ─── ads ────────────────────────────────────────────────────────────
+   Every slot is tagged data-ad-placement and maps 1:1 to a row in
+   admob-integration.md. Slots are hidden by default: they only appear for
+   free accounts, once consent is settled, and never on a Craving Escape
+   step. Free/paid states and copy are all rendered by the ADS module. */
+.ad { position: relative; border: 1px solid var(--border-soft); border-radius: var(--radius-md);
+  background: color-mix(in oklch, var(--fg) 3%, transparent); overflow: hidden; }
+.ad[hidden] { display: none; }
+.ad__l { display: flex; align-items: center; gap: 6px; padding: 4px 8px; border-bottom: 1px solid var(--border-soft);
+  font-size: 9px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.ad__b { padding: 14px var(--space-4); }
+.ad__t { font-size: 14.5px; font-weight: 700; line-height: 1.35; }
+.ad__d { font-size: 13px; line-height: 1.45; color: var(--muted); margin-top: 4px; }
+.ad__m { display: flex; align-items: center; gap: var(--space-2); margin-top: 12px; }
+.ad__cta { display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px;
+  border: 1px solid var(--border); border-radius: var(--radius-pill);
+  font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+.ad__why { margin-top: 10px; font-size: 12px; line-height: 1.45; color: var(--muted); }
+.ad--banner { flex: none; border-width: 1px 0 0; border-radius: 0; }
+.ad--banner .ad__b { padding: 10px var(--space-4); text-align: center; }
+.ad--banner .ad__t { font-size: 13px; letter-spacing: 0.04em; }
+.ad--banner .ad__d { font-size: 12px; margin-top: 2px; }
+
+/* ─── entitlements ─────────────────────────────────────────────────── */
+.tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid var(--border-soft);
+  border-radius: var(--radius-pill); font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+.tag--on { color: var(--fg); border-color: var(--border); }
+/* the same pill inside the plan picker title, matched to onboarding's sizing so
+   the two screens are pixel-consistent */
+.tag--pick { display: inline-block; margin-left: 6px; padding: 3px 7px; font-size: 9px;
+  letter-spacing: 0.12em; border-color: var(--border); vertical-align: 2px; white-space: nowrap; }
+/* the paywall: one hairline panel, left-aligned like every other surface */
+.lock { border: 1px solid var(--border-soft); border-radius: var(--radius-md);
+  background: color-mix(in oklch, var(--fg) 3%, transparent);
+  padding: var(--space-4); margin-top: var(--space-3); }
+.lock[hidden] { display: none; }
+/* inside the timer card the pitch loses its own frame: it reads as the reason
+   for the button beneath it, and the card keeps a single hairline at the top */
+.lock--in { border: 0; background: none; padding: 0; margin-top: var(--space-4); }
+.lock__t { font-family: var(--font-display); font-weight: 700; font-size: 16px; line-height: 1.15;
+  letter-spacing: 0.07em; text-transform: uppercase; margin-top: var(--space-3); }
+.lock__d { font-size: 13.5px; line-height: 1.5; color: var(--muted); margin-top: var(--space-2); }
+.slotnow { margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border-soft);
+  display: flex; align-items: center; gap: 7px;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg); }
+/* prototype-only state switch so the two versions of Home can be compared in place;
+   it is not product UI and lives outside the rule that gives Home one filled CTA */
+.pstate { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3);
+  padding-bottom: var(--space-3); border-bottom: 1px solid var(--border-soft); }
+.pstate__l { flex: none; font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted); }
+.sub__note { font-size: 12.5px; line-height: 1.5; color: var(--muted); text-align: center; margin-top: var(--space-3); }
+
+/* ─── ad overlays (interstitial + rewarded) ────────────────────────── */
+.adov { position: absolute; inset: 0; z-index: 12; display: grid; align-content: center; justify-items: center;
+  gap: var(--space-3); padding: var(--space-5); text-align: center; background: var(--scrim-strong); }
+.adov[hidden] { display: none; }
+.adov__card { width: 100%; max-width: 320px; border: 1px solid var(--border); border-radius: var(--radius-md);
+  background: var(--bg); padding: var(--space-4); }
+.adov__t { font-family: var(--font-display); font-weight: 700; font-size: 15px; letter-spacing: 0.1em; text-transform: uppercase; }
+.adov__d { font-size: 13.5px; line-height: 1.5; color: var(--muted); margin-top: 8px; }
+.adov__cd { font-family: var(--font-display); font-weight: 700; font-size: 30px; margin-top: var(--space-3); }
+.adov .cta { width: auto; min-height: 44px; padding: 0 24px; font-size: 12px; }
+
+/* ─── sheet + toast ────────────────────────────────────────────────── */
+.scrim { position: absolute; inset: 0; z-index: 8; background: var(--scrim-strong); opacity: 0; pointer-events: none;
+  transition: opacity var(--motion-base) var(--ease-standard); }
+.scrim.is-on { opacity: 1; pointer-events: auto; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 9; background: var(--bg);
+  border-top: 1px solid var(--border); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: var(--space-4);
+  padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px)); transform: translateY(101%);
+  transition: transform 320ms var(--ease-standard); max-height: 86%; overflow-y: auto; }
+.sheet.is-on { transform: none; }
+.toast { position: absolute; left: var(--space-4); right: var(--space-4); bottom: 100px; z-index: 10;
+  border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg); padding: var(--space-3) var(--space-4);
+  font-size: 13px; letter-spacing: 0.04em; display: flex; align-items: center; gap: var(--space-3);
+  transform: translateY(12px); opacity: 0; pointer-events: none; transition: opacity var(--motion-base), transform var(--motion-base) var(--ease-standard); }
+.toast.is-on { opacity: 1; transform: none; }
+.toast b { font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; font-size: var(--text-xs); }
+.empty { text-align: center; padding: var(--space-8) var(--space-4); }
+.empty svg { margin: 0 auto var(--space-4); color: var(--muted); }
+.empty p { font-size: 14px; color: var(--muted); max-width: 28ch; margin: 0 auto; }
+
+@media (max-width: 720px) {
+  .bar { padding: var(--space-3) var(--space-4); }
+  .bar__link { display: none; }
+  .deck { padding: 0; }
+  .device { width: 100%; height: 100dvh; border: 0; border-radius: 0; }
+  .notch { display: none; }
+  .status { height: calc(44px + env(safe-area-inset-top, 0px)); padding-top: env(safe-area-inset-top, 0px); }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="bar" data-od-id="page-bar">
+    <span class="bar__mark">Quit Smoke</span>
+    <nav class="bar__nav" aria-label="Prototype files">
+      <a class="bar__link" href="mobile-onboarding.html">Onboarding</a>
+      <a class="bar__link" href="mobile-system-surfaces.html">Widgets</a>
+    </nav>
+    <button class="cta cta--ghost cta--sm" id="theme" data-od-id="theme-toggle" style="width:96px;">Light</button>
+  </div>
+
+  <div class="deck">
+    <div class="device" data-od-id="device">
+      <div class="notch"><span></span></div>
+      <div class="status" aria-hidden="true">
+        <span id="clock">9:41</span>
+        <span class="status__icons">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4"/><rect x="4.5" y="5" width="3" height="6"/><rect x="9" y="2.5" width="3" height="8.5"/><rect x="13.5" y="0" width="3" height="11"/></svg>
+          <svg width="16" height="12" viewBox="0 0 16 12" fill="currentColor"><path d="M8 10.2 1.2 4.4a9.6 9.6 0 0 1 13.6 0L8 10.2Z"/></svg>
+          <svg width="26" height="12" viewBox="0 0 26 12" fill="none"><rect x=".5" y=".5" width="21" height="11" rx="3" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="15" height="8" rx="1.6" fill="currentColor"/><path d="M23 4v4a2 2 0 0 0 0-4Z" fill="currentColor" opacity=".5"/></svg>
+        </span>
+      </div>
+
+      <div class="app" id="app">
+
+        <!-- ══ HOME ══════════════════════════════════════════════ -->
+        <section class="view is-on" data-view="home" data-od-id="screen-home" aria-label="Home">
+          <header class="topbar">
+            <span class="topbar__t" data-od-id="home-title">Home</span>
+            <span class="topbar__x num" id="homeDayChip">Day 3 of 7</span>
+          </header>
+          <div class="body">
+            <div class="pstate" data-od-id="home-review-state">
+              <span class="pstate__l">Prototype state</span>
+              <div class="seg seg--mini" role="group" aria-label="Prototype state" id="homeState" data-od-id="seg-home-state">
+                <button type="button" data-state="locked" aria-pressed="true">Locked</button>
+                <button type="button" data-state="plan" aria-pressed="false">Unlocked</button>
+              </div>
+            </div>
+            <p class="rule-line" style="margin-bottom:12px;" data-od-id="home-rule">Timer running → I don't smoke</p>
+
+            <div class="card card--line hero" id="homeHero" data-od-id="timer-hero">
+              <div class="hero__top">
+                <span class="eyebrow hero__state"><i class="dot dot--run" id="runDot"></i><span id="timerState">Timer is running</span></span>
+                <span class="eyebrow" id="timerTarget">9 hour target</span>
+              </div>
+              <p class="digits" id="homeDigits" aria-live="off">09:00:00</p>
+              <div class="meter" role="img" aria-label="Today's timer progress" id="homeMeterWrap"><i id="homeMeter" style="width:0%"></i></div>
+              <div class="hero__foot">
+                <span class="hero__l" id="homeRemaining">Remaining today</span>
+                <span class="hero__r" id="homeElapsed">Elapsed 00:00</span>
+              </div>
+              <div class="hero__week" data-od-id="home-week">
+                <p class="hero__weekl">The seven days</p>
+                <div class="rail7" id="homeRail" role="img" aria-label="Daily hold for Day 1 to Day 7, then continuous."></div>
+              </div>
+              <div class="lock lock--in" id="homeTimerLock" data-od-id="home-timer-lock" hidden>
+                <span class="tag" id="homeLockTag">Smoke-Free Plan</span>
+                <p class="lock__t" id="homeLockT">Start your Smoke-Free Plan</p>
+                <p class="lock__d" id="homeLockD">One timer that grows every day, then keeps running for the length of your plan. No ads, and as many Trigger Zones as you need.</p>
+              </div>
+              <button class="cta cta--stack hero__cta" id="homeTimerCta" data-od-id="cta-home-timer" hidden><span>Unlock Smoke-Free Timer</span><span class="cta__sub" id="homeTimerSave" data-od-id="cta-home-timer-savings" hidden></span></button>
+            </div>
+
+            <div class="sec" id="homeSlotsSec" data-od-id="home-slots">
+              <p class="sec__l">Your slots</p>
+              <div class="card" style="padding:16px;">
+                <div class="rows" id="homeSlotList" data-od-id="home-slot-list"></div>
+                <p class="slotnow" id="homeSlotNow" data-od-id="home-slot-now"><i class="dot dot--run"></i><span>Next slot</span></p>
+                <button class="cta cta--ghost cta--sm" id="homeSlotsEdit" data-go="plan" data-od-id="cta-home-slots-edit" style="margin-top:var(--space-2);">Change your slots</button>
+                <p class="row__d" id="homeSlotNote" style="margin-top:8px;" data-od-id="home-slot-note">3 slots · 7 h a day</p>
+              </div>
+            </div>
+
+            <div class="sec" data-od-id="home-totals">
+              <p class="sec__l">Your totals</p>
+              <div class="card grid2">
+                <div data-od-id="stat-days"><p class="stat__v" id="stDays">3</p><p class="stat__l">Smoke-free days</p></div>
+                <div data-od-id="stat-cleared"><p class="stat__v" id="stCrav">4</p><p class="stat__l">Cravings cleared</p></div>
+                <div data-od-id="stat-steps"><p class="stat__v" id="stSteps">2,100</p><p class="stat__l">Steps walked</p></div>
+                <div data-od-id="stat-saved"><p class="stat__v" id="stMoney">$36.00</p><p class="stat__l">Money saved</p></div>
+              </div>
+            </div>
+
+            <div class="ad" id="adHomeNative" data-ad-placement="home_native" data-od-id="ad-home-native" hidden style="margin-top:20px;">
+              <p class="ad__l">Sponsored</p>
+              <div class="ad__b">
+                <p class="ad__t">Native ad, styled in the app's own type</p>
+                <p class="ad__d">Sits between sections rather than interrupting the routine. Same rules as the cards above it.</p>
+                <div class="ad__m"><span class="ad__cta">Install</span></div>
+                <p class="ad__why">Shown on free accounts only.</p>
+              </div>
+            </div>
+
+            <div class="sec" data-od-id="home-zones">
+              <p class="sec__l">Trigger Zones</p>
+              <div class="card">
+                <button class="row row--tap" style="padding-inline:16px;" data-go="zones" data-od-id="home-zones-open">
+                  <span class="row__b"><span class="row__t" id="homeZonesT">2 zones saved</span><span class="row__d" id="homeZonesD">Nearest: Corner store · 120 m away</span></span>
+                  <svg class="row__x" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg>
+                </button>
+              </div>
+              <p class="row__d" id="homeZonesCap" style="margin-top:8px;" data-od-id="home-zones-cap"></p>
+            </div>
+          </div>
+
+          <div class="ad ad--banner" id="adHomeBanner" data-ad-placement="home_banner" data-od-id="ad-home-banner" hidden>
+            <p class="ad__l">Advertisement</p>
+            <div class="ad__b">
+              <p class="ad__t">Anchored adaptive banner</p>
+              <p class="ad__d" id="adHomeBannerD">Docked above the tab bar so nothing on screen shifts when it loads.</p>
+            </div>
+          </div>
+
+          <nav class="tabbar" id="tabbar" data-od-id="tab-bar" aria-label="Main"></nav>
+        </section>
+
+        <!-- ══ PLAN ═══════════════════════════════════════════════ -->
+        <section class="view" data-view="plan" data-od-id="screen-plan" aria-label="Smoke-Free Plan" hidden>
+          <header class="topbar">
+            <span class="topbar__t" data-od-id="plan-title">Smoke-Free Plan</span>
+            <span class="topbar__x num" id="planChip">3 months</span>
+            <button class="topbar__g" data-guide="plan" aria-haspopup="dialog" data-od-id="btn-plan-guide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+              Guide
+            </button>
+          </header>
+          <div class="body">
+            <div class="sec" data-od-id="plan-rules" style="margin-top:0;">
+              <p class="sec__l">Your three rules</p>
+              <ol class="rules">
+                <li class="rule" data-od-id="plan-rule-1"><span class="rule__n" aria-hidden="true">01</span><span class="rule__t">Timer running → I don't smoke</span></li>
+                <li class="rule" data-od-id="plan-rule-2"><span class="rule__n" aria-hidden="true">02</span><span class="rule__t">Craving → Walk → Breathe → Move on</span></li>
+                <li class="rule" data-od-id="plan-rule-3"><span class="rule__n" aria-hidden="true">03</span><span class="rule__t">A slip does not reset the timer</span></li>
+              </ol>
+            </div>
+
+            <p class="eyebrow" id="planEyebrow" data-od-id="plan-eyebrow" style="margin-top:var(--space-5);">Day 3 of 7</p>
+            <h1 class="t" style="margin-top:8px;" data-od-id="plan-h1">Nine hours, then<br />the next one is longer.</h1>
+            <p class="prose" style="margin-top:10px;" data-od-id="plan-body">Each day holds three hours longer than the last, up to 21 on Day 7. After that it runs for the length of your plan. You choose the hours it runs, so it covers when you usually smoke.</p>
+
+            <div class="sec" data-od-id="plan-stairs">
+              <p class="sec__l">The ramp</p>
+              <div class="card" style="padding:16px 14px;">
+                <div class="stair" id="planStair" role="img" aria-label="Daily timer target, Day 1 to Day 7"></div>
+                <div class="stair__tail">
+                  <b data-od-id="plan-tail-title">After Day 7</b>
+                  <span class="num" id="planTailBar">Continuous · 90 days</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="sec" data-od-id="plan-slots">
+              <p class="sec__l">When it runs</p>
+              <div class="card" style="padding:16px;">
+                <p class="row__d" data-od-id="plan-slots-d">The timer only runs inside the slots you set. Pick the hours you smoke most, or the hours cravings hit hardest, then set each one to the half hour.</p>
+                <div class="slotgrid" role="group" aria-label="Timer slots" id="planSlots" style="margin-top:12px;">
+                  <button type="button" data-slot="7am" aria-pressed="true">7 AM</button>
+                  <button type="button" data-slot="9am" aria-pressed="false">9 AM</button>
+                  <button type="button" data-slot="12pm" aria-pressed="true">12 PM</button>
+                  <button type="button" data-slot="3pm" aria-pressed="false">3 PM</button>
+                  <button type="button" data-slot="6pm" aria-pressed="true">6 PM</button>
+                  <button type="button" data-slot="9pm" aria-pressed="false">9 PM</button>
+                  <button type="button" data-slot="12am" aria-pressed="false">12 AM</button>
+                </div>
+                <div class="slotrows" id="planSlotRows" data-od-id="plan-slot-rows"></div>
+                <p class="row__d" id="planSlotNote" style="margin-top:12px;" data-od-id="plan-slot-note">3 slots picked · 7 H a day</p>
+                <p class="row__d" id="planSlotTarget" style="margin-top:4px;" data-od-id="plan-slot-target">Day 3 holds 9 hours.</p>
+              </div>
+            </div>
+
+            <div class="sec" data-od-id="plan-compare">
+              <p class="sec__l">What the plan adds</p>
+              <div class="card adds" style="padding:16px;" id="planCompare"></div>
+              <p class="row__d" id="planCompareNote" style="margin-top:12px;text-align:center;"></p>
+            </div>
+          </div>
+          <nav class="tabbar" data-od-id="tab-bar-plan" aria-label="Main"></nav>
+        </section>
+
+        <!-- ══ SIGN IN ═══════════════════════════════════════════ -->
+        <section class="view" data-view="signin" data-od-id="screen-signin" aria-label="Sign in" hidden>
+          <header class="topbar">
+            <button type="button" class="topbar__g" id="signBack" data-od-id="signin-back">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>Back
+            </button>
+            <span class="topbar__t" data-od-id="signin-title">Account</span>
+          </header>
+          <div class="body">
+            <p class="eyebrow" data-od-id="signin-eyebrow">Your account</p>
+            <h1 class="t" style="margin-top:8px;" data-od-id="signin-h1">Sign in once.<br />Your progress stays yours.</h1>
+            <p class="prose" style="margin-top:10px;" data-od-id="signin-note">Your craving log and Progress are free either way. An account keeps them on every device you sign in on, and it is what the plan is bought with.</p>
+
+            <div class="sec" data-od-id="signin-providers">
+              <div class="card auth" style="padding:16px;">
+                <button class="cta" id="signApple" data-od-id="btn-sign-apple">
+                  <svg class="brandmark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.36 12.72c-.02-2.2 1.8-3.26 1.88-3.31-1.02-1.5-2.61-1.7-3.18-1.72-1.35-.14-2.64.8-3.33.8-.69 0-1.74-.78-2.86-.76-1.47.02-2.83.85-3.58 2.17-1.53 2.65-.39 6.57 1.1 8.72.73 1.05 1.6 2.23 2.74 2.19 1.1-.04 1.52-.71 2.85-.71 1.33 0 1.71.71 2.86.69 1.18-.02 1.93-1.07 2.65-2.12.84-1.22 1.18-2.4 1.2-2.46-.03-.01-2.3-.88-2.33-3.49zM14.2 5.6c.6-.74 1.01-1.76.9-2.78-.87.04-1.93.58-2.56 1.31-.56.65-1.05 1.69-.92 2.69.97.08 1.96-.49 2.58-1.22z"/></svg>
+                  Continue with Apple
+                </button>
+                <button class="cta cta--ghost" id="signGoogle" data-od-id="btn-sign-google">
+                  <svg class="brandmark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M20.4 12a8.4 8.4 0 1 1-2.6-6.05"/><path d="M20.7 10.1h-8.5v3.9h4.9"/></svg>
+                  Continue with Google
+                </button>
+              </div>
+              <p class="row__d" style="margin-top:12px;" data-od-id="signin-note-foot">Back keeps you where you were. Nothing here is required to keep the free tier open.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ══ SUBSCRIBE ══════════════════════════════════════════ -->
+        <section class="view" data-view="subscribe" data-od-id="screen-subscribe" aria-label="Smoke-Free Plan subscription" hidden>
+          <header class="topbar">
+            <button type="button" class="topbar__g" data-go="home" data-od-id="subscribe-back">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>Back
+            </button>
+            <span class="topbar__t" data-od-id="subscribe-title">Smoke-Free Plan</span>
+          </header>
+          <div class="body">
+            <p class="eyebrow" data-od-id="subscribe-eyebrow">Your plan</p>
+            <h1 class="t" style="margin-top:8px;" data-od-id="subscribe-h1">Choose how long<br />you are in this for.</h1>
+            <p class="prose" style="margin-top:10px;" data-od-id="subscribe-body">The timer grows three hours a day, up to 21 on Day 7, then runs non-stop for the length of your plan. You pick the hours it runs.</p>
+
+            <div class="plan" role="group" aria-label="Plan length" data-od-id="plan-picker" style="margin-top:var(--space-5);">
+              <button type="button" data-len="1" aria-pressed="false" data-od-id="plan-1m">
+                <span class="plan__tick" aria-hidden="true"></span>
+                <span class="plan__b"><span class="plan__t">1 month</span></span>
+                <span class="plan__p">$9.99</span>
+              </button>
+              <button type="button" data-len="3" aria-pressed="true" data-od-id="plan-3m">
+                <span class="plan__tick" aria-hidden="true"></span>
+                <span class="plan__b"><span class="plan__t">3 months <span class="tag tag--pick">Most chosen</span></span></span>
+                <span class="plan__p">$19.99</span>
+              </button>
+            </div>
+
+            <div class="sec" data-od-id="subscribe-adds">
+              <p class="sec__l">What the plan adds</p>
+              <div class="card adds" style="padding:16px;" id="subAdds"></div>
+            </div>
+
+            <p class="prose" style="margin-top:20px;font-size:13.5px;" data-od-id="subscribe-reset">No resets, ever. If you slip, the timer keeps running and the streak keeps its count.</p>
+
+            <button class="cta" id="subStart" style="margin-top:20px;" data-od-id="cta-subscribe-start">Start 3-Month Plan</button>
+            <p class="sub__note" data-od-id="subscribe-note">Cancel anytime. Craving Escape, your log and Progress stay free either way.</p>
+          </div>
+        </section>
+
+        <!-- ══ PROGRESS ═══════════════════════════════════════════ -->
+        <section class="view" data-view="progress" data-od-id="screen-progress" aria-label="Progress" hidden>
+          <header class="topbar">
+            <span class="topbar__t" data-od-id="progress-title">Progress</span>
+            <span class="topbar__x">Last 7 days</span>
+          </header>
+          <div class="body">
+            <div class="card card--line" style="padding:20px;" data-od-id="progress-hero">
+              <p class="eyebrow" data-od-id="progress-hero-eyebrow">Smoke-free</p>
+              <p class="pgh__n" id="pgDays" data-od-id="progress-days">3</p>
+              <p class="pgh__u" data-od-id="progress-days-unit">Days in a row</p>
+              <div class="pgh__steps" id="pgRampWrap" role="img" aria-label="Day 3 of the 7-day ramp" data-od-id="progress-ramp"></div>
+              <div class="hero__foot pgh__foot" style="margin-top:16px;">
+                <span class="hero__l" id="pgFootL">9 hours today</span>
+                <span class="hero__r" id="pgFootR">4 days to continuous</span>
+              </div>
+            </div>
+
+            <div class="sec" data-od-id="progress-stats">
+              <p class="sec__l">Totals</p>
+              <div class="card grid2">
+                <div><p class="stat__v" id="pgCrav">4</p><p class="stat__l">Cravings cleared</p></div>
+                <div><p class="stat__v" id="pgSteps">2,100</p><p class="stat__l">Steps walked</p></div>
+                <div><p class="stat__v" id="pgMoney">$36.00</p><p class="stat__l">Money saved</p></div>
+                <div><p class="stat__v" id="pgRate">3 of 7</p><p class="stat__l">Days a craving hit</p></div>
+              </div>
+            </div>
+
+            <div class="sec" data-od-id="progress-chart">
+              <p class="sec__l">Cravings cleared per day</p>
+              <div class="card">
+                <div class="chart" id="pgChart" role="img" aria-label="Bar chart of cravings cleared per day over the last seven days"></div>
+                <div class="xaxis" id="pgAxis"></div>
+              </div>
+            </div>
+
+            <div class="sec" data-od-id="progress-recent">
+              <p class="sec__l">Recent</p>
+              <div class="card" id="pgRecent" style="padding-inline:16px;"></div>
+            </div>
+
+            <div class="ad" id="adProgressNative" data-ad-placement="progress_native" data-od-id="ad-progress-native" hidden style="margin-top:20px;">
+              <p class="ad__l">Sponsored</p>
+              <div class="ad__b">
+                <p class="ad__t">Native ad below the numbers</p>
+                <p class="ad__d">Progress is a read-only screen, so a static placement here costs the user nothing.</p>
+                <div class="ad__m"><span class="ad__cta">Learn more</span></div>
+              </div>
+            </div>
+          </div>
+          <nav class="tabbar" data-od-id="tab-bar-progress" aria-label="Main"></nav>
+        </section>
+
+        <!-- ══ SETTINGS ═══════════════════════════════════════════ -->
+        <section class="view" data-view="settings" data-od-id="screen-settings" aria-label="Settings" hidden>
+          <header class="topbar">
+            <span class="topbar__t" data-od-id="settings-title">Settings</span>
+            <span class="topbar__x">Sample profile</span>
+          </header>
+          <div class="body">
+            <p class="sec__l">Appearance</p>
+            <div class="seg" role="group" aria-label="Appearance" data-od-id="seg-appearance">
+              <button type="button" data-appearance="dark" aria-pressed="true">Dark</button>
+              <button type="button" data-appearance="light" aria-pressed="false">Light</button>
+              <button type="button" data-appearance="auto" aria-pressed="false">System</button>
+            </div>
+            <p class="row__d" id="appearNow" style="margin-top:10px;" data-od-id="settings-appearance-state">Showing dark.</p>
+
+            <div class="sec" data-od-id="settings-habit">
+              <p class="sec__l">Your habit</p>
+              <div class="card" style="padding:0 16px;">
+                <div class="field">
+                  <p class="field__l" id="lbl-cpd">Cigarettes a day</p>
+                  <div class="stepper">
+                    <button type="button" id="cpdDown" aria-label="One fewer cigarette a day"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 8h10"/></svg></button>
+                    <b id="cpdVal" aria-labelledby="lbl-cpd">20</b>
+                    <button type="button" id="cpdUp" aria-label="One more cigarette a day"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8 3v10M3 8h10"/></svg></button>
+                  </div>
+                </div>
+                <div class="field">
+                  <p class="field__l" id="lbl-price">Price of a pack</p>
+                  <div class="money"><span id="curSym">$</span><input id="priceVal" type="text" inputmode="decimal" value="12.00" aria-labelledby="lbl-price" /></div>
+                </div>
+                <div class="field">
+                  <p class="field__l">Currency</p>
+                  <select class="pick" id="curSel" aria-label="Currency">
+                    <option value="USD" selected>USD — US dollar</option>
+                    <option value="EUR">EUR — Euro</option>
+                    <option value="GBP">GBP — Pound sterling</option>
+                    <option value="INR">INR — Indian rupee</option>
+                  </select>
+                </div>
+                <p class="row__d" style="padding:12px 0 16px;" data-od-id="settings-savings" id="saveLine">$12.00 a day · $360.00 a month · $4,380.00 a year</p>
+              </div>
+            </div>
+
+            <div class="sec" data-od-id="settings-env">
+              <p class="sec__l">Reminders &amp; alerts</p>
+              <div class="card" style="padding:0 16px;">
+                <button class="row" style="width:100%;" data-switch="remind" role="switch" aria-checked="true" data-od-id="sw-reminder"><span class="row__b"><span class="row__t">Persistent notification</span><span class="row__d">Keeps today's timer on your Lock Screen</span></span><span class="sw" aria-hidden="true"><i></i></span></button>
+                <button class="row" style="width:100%;" data-switch="zoneAlert" role="switch" aria-checked="true" data-od-id="sw-zones"><span class="row__b"><span class="row__t">Trigger Zone alerts</span><span class="row__d">Nudges you when you enter a saved place</span></span><span class="sw" aria-hidden="true"><i></i></span></button>
+                <button class="row" style="width:100%;" data-switch="haptics" role="switch" aria-checked="true" data-od-id="sw-haptics"><span class="row__b"><span class="row__t">Haptics</span><span class="row__d">A tick on each step change and on a cleared craving</span></span><span class="sw" aria-hidden="true"><i></i></span></button>
+              </div>
+            </div>
+
+            <div class="sec" data-od-id="settings-support">
+              <p class="sec__l">Support</p>
+              <div class="card" style="padding:0 16px;">
+                <button class="row row--tap" style="width:100%;" data-go="zones" data-od-id="set-zones"><span class="row__b"><span class="row__t">Trigger Zones</span></span><svg class="row__x" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg></button>
+                <a class="row row--tap" style="width:100%;" href="mobile-system-surfaces.html" data-od-id="set-widgets"><span class="row__b"><span class="row__t">Home &amp; Lock Screen widgets</span><span class="row__d">Every widget size, Light and Dark</span></span><svg class="row__x" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg></a>
+              </div>
+            </div>
+
+            <div class="sec" data-od-id="settings-account">
+              <p class="sec__l">Account</p>
+              <div class="card" style="padding:0 16px;">
+                <div class="row" data-od-id="acct-row">
+                  <span class="row__b"><span class="row__t" id="acctName">Not signed in</span><span class="row__d" id="acctD">Everything free is open. The plan needs an account.</span></span>
+                  <button class="cta cta--ghost cta--sm" id="acctBtn" style="width:auto;min-width:96px;" data-od-id="cta-account">Sign in</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="sec" data-od-id="settings-plan">
+              <p class="sec__l">Plan &amp; ads</p>
+              <div class="card" style="padding:0 16px;">
+                <div class="row" data-od-id="ent-timer"><span class="row__b"><span class="row__t">Smoke-free timer</span><span class="row__d" id="entTimerD">Locked — part of the plan</span></span><span class="tag" id="entTimerTag">Locked</span></div>
+                <div class="row" data-od-id="ent-zones"><span class="row__b"><span class="row__t">Trigger Zones</span><span class="row__d" id="entZonesD">1 of 1</span></span><span class="tag" id="entZonesTag">Free</span></div>
+                <div class="row" data-od-id="ent-widgets"><span class="row__b"><span class="row__t">Home &amp; Lock Screen widgets</span><span class="row__d" id="entWidgetsD">Kept, with ads</span></span><span class="tag" id="entWidgetsTag">Free</span></div>
+                <button class="row" style="width:100%;" id="swAds" role="switch" aria-checked="false" data-od-id="sw-personalised-ads"><span class="row__b"><span class="row__t">Personalised ads</span><span class="row__d" id="swAdsD">Off — non-personalised ads only</span></span><span class="sw" aria-hidden="true"><i></i></span></button>
+                <div class="row" data-od-id="ent-privacy">
+                  <span class="row__b"><span class="row__t">Privacy options</span><span class="row__d">Open the consent form to change or withdraw your choice. Required in the EEA, UK and Switzerland.</span></span>
+                  <button class="cta cta--ghost cta--sm" id="privacyOpen" style="width:auto;min-width:96px;" data-od-id="cta-privacy-options">Manage</button>
+                </div>
+                <div class="row" style="display:block;border-bottom:0;" data-od-id="ent-review-state">
+                  <span class="row__t">Review state</span>
+                  <span class="row__d" style="display:block;margin-top:4px;">The prototype opens on the paywall: timer locked, no widget trial. Switch states to compare all three.</span>
+                  <div class="seg" style="margin-top:10px;" role="group" aria-label="Review state" id="entState" data-od-id="seg-review-state">
+                    <button type="button" data-state="locked" aria-pressed="true">Paywall</button>
+                    <button type="button" data-state="trial" aria-pressed="false">Widget trial</button>
+                    <button type="button" data-state="plan" aria-pressed="false">Plan</button>
+                  </div>
+                </div>
+              </div>
+              <p class="row__d" id="entNote" style="margin-top:10px;" data-od-id="ent-note"></p>
+            </div>
+
+            <div class="sec" data-od-id="settings-about">
+              <p class="sec__l">About this prototype</p>
+              <div class="card" style="padding:16px;">
+                <p class="row__d">Sample profile: 20 cigarettes a day, $12.00 a pack, Day 3 of a 3-month plan. Walk step counts are simulated at 105 steps a minute and are replaced by the device pedometer at build. Prices are placeholders pending store pricing.</p>
+                <button class="cta cta--ghost cta--sm" style="margin-top:14px;" id="reset" data-od-id="set-reset">Reset sample data</button>
+              </div>
+            </div>
+          </div>
+          <nav class="tabbar" data-od-id="tab-bar-settings" aria-label="Main"></nav>
+        </section>
+
+        <!-- ══ TRIGGER ZONES ══════════════════════════════════════ -->
+        <section class="view" data-view="zones" data-od-id="screen-zones" aria-label="Trigger Zones" hidden>
+          <header class="topbar">
+            <button class="icon-btn" data-go="home" aria-label="Back to Home" data-od-id="zones-back"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 6 10l6 6"/></svg></button>
+            <span class="topbar__t" data-od-id="zones-title">Trigger Zones</span>
+            <button class="icon-btn" id="zoneTest" aria-label="Send a test alert" data-od-id="zones-test"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M10 2.5 18 16H2Z"/><path d="M10 8v3.4M10 13.6v.1"/></svg></button>
+          </header>
+          <div class="body" id="zonesBody"></div>
+          <div class="foot" id="zonesFoot"></div>
+        </section>
+
+        <!-- ══ CRAVING ESCAPE · WALK ══════════════════════════════ -->
+        <section class="view" data-view="walk" data-od-id="screen-walk" aria-label="Craving Escape, step one, walk" hidden>
+          <header class="topbar">
+            <span class="topbar__t">Craving Escape</span>
+            <span class="topbar__x" data-od-id="walk-step">1 / 2</span>
+            <button class="topbar__g" data-guide="walk" aria-haspopup="dialog" data-od-id="btn-walk-guide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2 2 0 0 1 6 4h5v16H6a2 2 0 0 1-2-2z"/><path d="M20 5.5A2 2 0 0 0 18 4h-5v16h5a2 2 0 0 0 2-2z"/></svg>
+              Guide
+            </button>
+          </header>
+          <div class="body">
+            <h1 class="t" style="margin-top:8px;text-align:center;" data-od-id="walk-title">Get up and walk.</h1>
+            <p class="cue" data-od-id="walk-cue">Change your surroundings and the thought changes with it. An urge cannot be argued down, only outlasted. Leave the room it happened in and let your body take over for a few minutes.</p>
+            <div style="margin-top:20px;" data-od-id="walk-dur">
+              <div class="seg" role="group" aria-label="Walk duration" data-seg="walk">
+                <button type="button" data-min="5" aria-pressed="true">5 min</button>
+                <button type="button" data-min="10" aria-pressed="false">10 min</button>
+                <button type="button" data-min="20" aria-pressed="false">20 min</button>
+              </div>
+            </div>
+            <div class="ring-wrap" data-od-id="walk-ring" style="margin-top:20px;">
+              <svg class="ring" viewBox="0 0 220 220" aria-hidden="true"><circle class="ring__t" cx="110" cy="110" r="94"/><circle class="ring__p" id="walkArc" cx="110" cy="110" r="94" stroke-dasharray="590.6" stroke-dashoffset="0"/></svg>
+              <div class="ring-mid">
+                <p class="ring-num" id="walkNum" aria-hidden="true">05:00</p>
+                <p class="ring-sub" id="walkSteps">0 steps</p>
+                <p class="prose" style="font-size:13px;" id="walkLeft">Remaining</p>
+              </div>
+            </div>
+            <p class="prose" style="text-align:center;font-size:13px;" aria-live="polite" id="walkLive">Walk timer running.</p>
+            <p class="prose" style="text-align:center;font-size:13px;margin-top:6px;">The timer starts on its own. Stop it early, or skip ahead to breathing.</p>
+          </div>
+          <div class="foot">
+            <button class="cta" id="walkDone" data-od-id="cta-walk-done">Start breathing</button>
+            <button class="cta cta--ghost" id="walkStop" data-od-id="cta-walk-stop">Stop and log it</button>
+          </div>
+        </section>
+
+        <!-- ══ CRAVING ESCAPE · BREATHE ═══════════════════════════ -->
+        <section class="view" data-view="breathe" data-od-id="screen-breathe" aria-label="Craving Escape, step two, breathe" hidden>
+          <header class="topbar">
+            <span class="topbar__t">Craving Escape</span>
+            <span class="topbar__x">2 / 2</span>
+            <button class="topbar__g" data-guide="breathe" aria-haspopup="dialog" data-od-id="btn-breathe-guide">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A2 2 0 0 1 6 4h5v16H6a2 2 0 0 1-2-2z"/><path d="M20 5.5A2 2 0 0 0 18 4h-5v16h5a2 2 0 0 0 2-2z"/></svg>
+              Guide
+            </button>
+          </header>
+          <div class="body">
+            <h1 class="t" style="margin-top:8px;text-align:center;" data-od-id="breathe-title">Now breathe.</h1>
+            <p class="cue" data-od-id="breathe-cue">Let your next breath be smoke-free. Left nostril in, right nostril out. This one-nostril pattern calms you faster than a long exhale on its own.</p>
+            <div style="margin-top:20px;" data-od-id="breathe-dur">
+              <div class="seg" role="group" aria-label="Breathe duration" data-seg="breathe">
+                <button type="button" data-min="2" aria-pressed="false">2 min</button>
+                <button type="button" data-min="5" aria-pressed="true">5 min</button>
+                <button type="button" data-min="10" aria-pressed="false">10 min</button>
+              </div>
+            </div>
+            <div class="ring-wrap" data-od-id="breathe-ring" style="margin-top:20px;">
+              <svg class="ring" viewBox="0 0 220 220" aria-hidden="true"><circle class="ring__t" cx="110" cy="110" r="94"/><circle class="ring__p" id="breathArc" cx="110" cy="110" r="94" stroke-dasharray="590.6" stroke-dashoffset="0"/></svg>
+              <div class="ring-mid">
+                <p class="ring-num" id="breathNum" aria-hidden="true">05:00</p>
+                <p class="prose" style="font-size:13px;">Remaining</p>
+                <p class="sr" id="breathLive" aria-live="polite">In 4</p>
+              </div>
+            </div>
+            <p class="prose" style="text-align:center;font-size:13px;" id="breathPattern">Pattern 4–7–8</p>
+          </div>
+          <div class="foot">
+            <button class="cta" id="breathDone" data-od-id="cta-breathe-done">Done</button>
+            <button class="cta cta--ghost" id="breathSkip" data-od-id="cta-breathe-skip">Skip to reflection</button>
+          </div>
+        </section>
+
+        <!-- ══ REFLECTION ═════════════════════════════════════════ -->
+        <section class="view" data-view="reflect" data-od-id="screen-reflect" aria-label="Reflection" hidden>
+          <header class="topbar">
+            <span class="topbar__t" data-od-id="reflect-title">Two quick questions</span>
+            <span class="topbar__x">Optional</span>
+          </header>
+          <div class="body">
+            <p class="prose" style="margin-top:8px;" data-od-id="reflect-body">What set it off, and what you are doing next. Answering makes the next one easier to spot.</p>
+            <div class="sec" style="margin-top:24px;">
+              <p class="sec__l" id="lbl-trig">What triggered it</p>
+              <select class="pick" id="triggerSel" aria-labelledby="lbl-trig" data-od-id="field-trigger">
+                <option>After a coffee</option>
+                <option>Stress at work</option>
+                <option>Socialising</option>
+                <option>Driving</option>
+                <option>Alcohol</option>
+                <option>Boredom</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="sec">
+              <p class="sec__l" id="lbl-next">What you are doing next</p>
+              <select class="pick" id="nextSel" aria-labelledby="lbl-next" data-od-id="field-next">
+                <option>Walking again</option>
+                <option>Breathing</option>
+                <option>Water</option>
+                <option>Back to work</option>
+                <option>Calling someone</option>
+                <option>Going to bed</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <p class="prose" style="margin-top:18px;font-size:13px;" data-od-id="reflect-skip-note">Skip logs "Other" and moves on. Nothing here is required.</p>
+          </div>
+          <div class="foot">
+            <button class="cta" id="reflectGo" data-od-id="cta-reflect-continue">Log it</button>
+            <button class="cta cta--ghost" id="reflectSkip" data-od-id="cta-reflect-skip">Skip</button>
+          </div>
+        </section>
+
+        <!-- ══ CLEARED ════════════════════════════════════════════ -->
+        <section class="view" data-view="cleared" data-od-id="screen-cleared" aria-label="Craving cleared" hidden>
+          <header class="topbar">
+            <span class="topbar__t" data-od-id="cleared-title">Craving cleared</span>
+            <span class="topbar__x" id="clearedCount">4 cleared</span>
+          </header>
+          <div class="body">
+            <div class="ring-wrap" style="width:min(52cqi,168px);margin-top:16px;" data-od-id="cleared-check">
+              <svg class="ring" viewBox="0 0 220 220" aria-hidden="true"><circle class="ring__t" cx="110" cy="110" r="94"/><circle class="ring__p" cx="110" cy="110" r="94" stroke-dasharray="590.6" stroke-dashoffset="0"/></svg>
+              <div class="ring-mid">
+                <svg width="46" height="46" viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 24.5 20 33l15-16"/></svg>
+              </div>
+            </div>
+            <h1 class="t" style="text-align:center;margin-top:4px;" data-od-id="cleared-h1">It passed.</h1>
+            <p class="prose" style="text-align:center;margin-top:10px;" data-od-id="cleared-body">The timer never stopped, and nothing was reset.</p>
+            <div class="card" style="margin-top:22px;padding:0 16px;" id="clearedStats" data-od-id="cleared-stats"></div>
+            <p class="prose" style="margin-top:16px;font-size:13.5px;" data-od-id="cleared-note">If you slip later, the streak keeps its count and the timer keeps running. Coming back is the whole point.</p>
+          </div>
+          <div class="foot">
+            <button class="cta" id="clearedHome" data-od-id="cta-cleared-done">Back to Home</button>
+            <button class="cta cta--ghost" id="clearedAgain" data-od-id="cta-cleared-again">Walk again</button>
+          </div>
+        </section>
+
+        <div class="scrim" id="scrim"></div>
+
+        <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetT" hidden>
+          <p class="eyebrow" id="sheetT" data-od-id="sheet-title">New Trigger Zone</p>
+          <p class="prose" style="margin-top:8px;">A place where you usually buy or smoke. You will get a nudge when you walk into it.</p>
+          <div class="field" style="margin-top:18px;">
+            <p class="field__l" id="lbl-zone">Place name</p>
+            <input class="pick" id="zoneName" style="margin-top:6px;" placeholder="Corner store" aria-labelledby="lbl-zone" data-od-id="field-zone-name" />
+          </div>
+          <div class="field">
+            <p class="field__l">Radius</p>
+            <div class="seg" style="margin-top:6px;" role="group" aria-label="Radius">
+              <button type="button" data-rad="100" aria-pressed="false">100 m</button>
+              <button type="button" data-rad="250" aria-pressed="true">250 m</button>
+              <button type="button" data-rad="500" aria-pressed="false">500 m</button>
+            </div>
+          </div>
+          <div style="display:grid;gap:8px;margin-top:20px;">
+            <button class="cta" id="zoneAdd" data-od-id="cta-zone-add">Add zone</button>
+            <button class="cta cta--ghost" id="zoneCancel" data-od-id="cta-zone-cancel">Cancel</button>
+          </div>
+        </div>
+
+        <div class="sheet" id="guideSheet" role="dialog" aria-modal="true" aria-labelledby="guideSheetT" hidden>
+          <p class="eyebrow" id="guideSheetT" data-od-id="guide-dialog-title">Why walking works</p>
+          <div class="guide" id="guideWalk" data-od-id="guide-dialog-walk">
+            <p class="guide__w">Thinking it away does not work. Move instead.</p>
+            <p class="guide__s">A craving lasts a few minutes. Walking spends that window on movement instead of on fighting the thought, and the restlessness ends up somewhere to go other than a cigarette.</p>
+            <div class="guide__l">
+              <p class="guide__n"><span class="guide__i" aria-hidden="true">1</span><span>Stand up now, before you talk yourself out of it.</span></p>
+              <p class="guide__n"><span class="guide__i" aria-hidden="true">2</span><span>Leave the room. Different air, different place, different thought.</span></p>
+              <p class="guide__n"><span class="guide__i" aria-hidden="true">3</span><span>Walk at a pace that raises your breathing a little.</span></p>
+              <p class="guide__n"><span class="guide__i" aria-hidden="true">4</span><span>Stay out until the timer ends, then breathe.</span></p>
+            </div>
+          </div>
+          <div class="guide" id="guideBreathe" data-od-id="guide-dialog-breathe" hidden>
+            <p class="guide__w">The urge fades on its own. Slow the breath and stay with it.</p>
+            <p class="guide__s">A craving lasts a few minutes. Breathing spends that window on the exhale instead of on the urge, and the restlessness settles while you stay still.</p>
+            <div class="guide__l">
+              <p class="guide__n"><span class="guide__i" aria-hidden="true">1</span><span>Breathe in easily, without filling more than you need.</span></p>
+              <p class="guide__n"><span class="guide__i" aria-hidden="true">2</span><span>Let the exhale run a little longer than the inhale.</span></p>
+              <p class="guide__n"><span class="guide__i" aria-hidden="true">3</span><span>Keep your attention on the exhale, or on a spot on the floor if that is easier.</span></p>
+              <p class="guide__n"><span class="guide__i" aria-hidden="true">4</span><span>Stay with it until the timer ends.</span></p>
+            </div>
+            <p class="guide__s">Alternating your nostrils can deepen the slowdown, and it can slow things down faster during a craving. Skip it if a nostril is blocked or closing one is uncomfortable. Breathe through both, slowly, with your attention on the exhale. That focus is what settles you, not the pattern.</p>
+          </div>
+          <div class="guide" id="guidePlan" data-od-id="guide-dialog-plan" hidden>
+            <p class="guide__w">The timer runs in the hours you pick. While it is running, you don't smoke.</p>
+            <p class="guide__s">That is the whole rule, and the plan is built to make it easier to keep. The timer holds a little longer every day, so the gap between one cigarette and the next keeps widening until a long gap is the normal one.</p>
+            <div class="guide__l">
+              <p class="guide__n"><span class="guide__i" aria-hidden="true">1</span><span>Pick the hours you usually smoke. Those are the hours the timer holds for you.</span></p>
+              <p class="guide__n"><span class="guide__i" aria-hidden="true">2</span><span>It starts short on purpose. A short hold you keep beats a long one you don't.</span></p>
+              <p class="guide__n"><span class="guide__i" aria-hidden="true">3</span><span>When a craving lands mid-hold, you don't smoke. Open Craving Escape and walk it out, then come back to the clock.</span></p>
+              <p class="guide__n"><span class="guide__i" aria-hidden="true">4</span><span>Each day adds a little more time. After Day 7 it keeps running, and the rule stays exactly the same.</span></p>
+            </div>
+          </div>
+          <div style="display:grid;gap:8px;margin-top:20px;">
+            <button class="cta" id="guideClose" data-od-id="cta-guide-close">Back to the timer</button>
+          </div>
+        </div>
+
+        <div class="toast" id="toast" role="status" aria-live="polite"><b id="toastT">Alert</b><span id="toastD"></span></div>
+
+        <!-- Full-screen ad formats. Both sit above every view, so a craving
+             step can never be covered: the ADS module refuses to fire them
+             while a Craving Escape timer is running. -->
+        <div class="adov" id="adInter" data-ad-format="interstitial" data-ad-placement="session_inter" data-od-id="ad-interstitial" role="dialog" aria-modal="true" aria-labelledby="adInterT" hidden>
+          <div class="adov__card">
+            <p class="ad__l" style="border:0;padding:0 0 8px;">Advertisement</p>
+            <p class="adov__t" id="adInterT">Interstitial</p>
+            <p class="adov__d" id="adInterD">Shown at a natural break, once a session ends, at most once every 60 seconds.</p>
+            <button class="cta" id="adInterClose" style="margin-top:16px;width:100%;" data-od-id="cta-ad-interstitial-close">Close ad and continue</button>
+          </div>
+        </div>
+
+        <div class="adov" id="adReward" data-ad-format="rewarded" data-ad-placement="zone_rewarded" data-od-id="ad-rewarded" role="dialog" aria-modal="true" aria-labelledby="adRewardT" hidden>
+          <div class="adov__card">
+            <p class="ad__l" style="border:0;padding:0 0 8px;">Rewarded</p>
+            <p class="adov__t" id="adRewardT">One more Trigger Zone</p>
+            <p class="adov__d" id="adRewardD">Watch to the end and a zone slot is added to your account. You choose to start it.</p>
+            <p class="adov__cd" id="adRewardCd">5</p>
+            <div style="display:grid;gap:8px;margin-top:16px;">
+              <button class="cta" id="adRewardStart" data-od-id="cta-ad-rewarded-start">Watch the ad</button>
+              <button class="cta cta--ghost" id="adRewardClose" data-od-id="cta-ad-rewarded-close">No thanks</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="adov" id="adConsent" data-ad-format="consent" data-od-id="ad-consent" role="dialog" aria-modal="true" aria-labelledby="adConsentT" hidden>
+          <div class="adov__card">
+            <p class="adov__t" id="adConsentT">Privacy options</p>
+            <p class="adov__d">Google's User Messaging Platform collects this before any ad request. Personalised ads use your advertising ID; non-personalised ads do not. You can change this at any time.</p>
+            <div style="display:grid;gap:8px;margin-top:16px;">
+              <button class="cta" id="adConsentPersonal" data-od-id="cta-consent-personal">Personalised ads</button>
+              <button class="cta cta--ghost" id="adConsentLimited" data-od-id="cta-consent-limited">Only non-personalised</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="device__glare"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const root = document.documentElement;
+  const $ = s => document.querySelector(s);
+  const $$ = s => [...document.querySelectorAll(s)];
+  const C = 590.6;                       /* ring circumference, r = 94 */
+  const RAMP = [180, 360, 540, 720, 900, 1080, 1260];
+  const RAMP_TXT = ['3 HOURS', '6 HOURS', '9 HOURS', '12 HOURS', '15 HOURS', '18 HOURS', '21 HOURS'];
+  const RAMP_SHORT = ['3H', '6H', '9H', '12H', '15H', '18H', '21H'];
+  const PLAN_DAYS = { 1: 30, 3: 90 };
+  
+  const SYM = { USD: '$', EUR: '€', GBP: '£', INR: '₹' };
+  /* rupees are grouped the Indian way — 1,20,000 rather than 120,000 */
+  const LOCALE = { INR: 'en-IN' };
+  const CADENCE = 105;                  /* steps per minute, simulated */
+  const ZONES0 = [
+    { name: 'Corner store', dist: 120, rad: 250, on: true },
+    { name: 'Gas station on 4th', dist: 400, rad: 250, on: true },
+    { name: 'The bar on Ellis', dist: 1100, rad: 500, on: false }
+  ];
+  const TRIGGERS0 = ['After a coffee', 'Stress at work', 'Driving', 'Other'];
+  const DAYS0 = [1, 1, 0, 0, 2, 0, 0];  /* cravings cleared, last 7 days incl. today */
+
+  /* ── persisted state ───────────────────────────────────────────────
+     trialEnd is the Home & Lock Screen widget trial. The smoke-free timer
+     has no trial, so a free account opens with it locked. */
+  const TRIAL_MS = 3 * 864e5;        /* three days of the Home & Lock Screen widgets, free */
+  const ZONE_CAP_FREE = 1;           /* free account keeps one Trigger Zone */
+  const STATE_V = 3;                 /* bump to move stored accounts onto a new default */
+  /* each anchor slot carries a real start and a real length, so the tally is
+     exact minutes rather than a decorative weight. 2h + 2h + 3h keeps the 7h
+     default. The anchors step three hours apart, so seven of them at the longest
+     length reach the full 21 hours of Day 7. */
+  const SLOT_DEF = { '7am': { s: 420, l: 120 }, '9am': { s: 540, l: 120 },
+    '12pm': { s: 720, l: 120 }, '3pm': { s: 900, l: 120 },
+    '6pm': { s: 1080, l: 180 }, '9pm': { s: 1260, l: 120 },
+    '12am': { s: 0, l: 120 } };
+  const DEF = { theme: 'dark', day: 3, plan: 3, cpd: 20, price: 12, cur: 'USD',
+    cleared: 4, steps: 2100, zones: ZONES0, haptics: true, on: Date.now() - 35 * 60000,
+    slots: ['7am', '12pm', '6pm'], slotPlan: JSON.parse(JSON.stringify(SLOT_DEF)), subs: false,
+    /* null = signed out. There is no guest state: the free tier is simply
+       being signed out, so the plan gate is visible on load with no setup */
+    acct: null,
+    /* widget trial spent, timer paid only, so the paywall is the first thing to review */
+    trialEnd: 0, consent: 'limited', zoneBonus: 0, interAfter: 0, v: STATE_V };
+  let S;
+  try { S = Object.assign({}, DEF, JSON.parse(localStorage.getItem('qs.state') || '{}')); }
+  catch (e) { S = Object.assign({}, DEF); }
+  /* a stored trial from the old default is spent once, so a reload still lands on the paywall */
+  if (S.v !== STATE_V && !S.subs) S.trialEnd = 0;
+  S.v = STATE_V;
+  if (!Array.isArray(S.slots)) S.slots = DEF.slots.slice();
+  /* backfill precision for any anchor saved before this existed, and drop unknown keys */
+  S.slotPlan = S.slotPlan && typeof S.slotPlan === 'object' ? S.slotPlan : {};
+  Object.keys(SLOT_DEF).forEach(k => { if (!S.slotPlan[k]) S.slotPlan[k] = Object.assign({}, SLOT_DEF[k]); });
+  Object.keys(S.slotPlan).forEach(k => { if (!SLOT_DEF[k]) delete S.slotPlan[k]; });
+  const save = () => { try { localStorage.setItem('qs.state', JSON.stringify(S)); } catch (e) {} };
+  const money = n => SYM[S.cur] + n.toLocaleString(LOCALE[S.cur] || 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const buzz = ms => { if (S.haptics && navigator.vibrate) { try { navigator.vibrate(ms); } catch (e) {} } };
+
+  /* ── entitlements ─────────────────────────────────────────────────
+     Craving Escape: free throughout, ads supported.
+     Smoke-Free Timer: the plan only, with no trial at all.
+     Home & Lock Screen widgets: three-day trial on free, then ads;
+     ad-free on the plan.
+     Trigger Zones: one on free, unlimited on the plan.
+     The craving log and Progress stay free. */
+  const isPaid = () => !!S.subs;
+  const trialLeft = () => Math.max(0, (S.trialEnd || 0) - Date.now());
+  const trialDays = () => Math.ceil(trialLeft() / 864e5);
+  const timerUnlocked = () => isPaid();
+  const widgetsUnlocked = () => isPaid() || trialLeft() > 0;
+  const zoneCap = () => isPaid() ? Infinity : ZONE_CAP_FREE + (S.zoneBonus || 0);
+
+  /* ── ads: AdMob placement layer ────────────────────────────────────
+     AdMob ships as a native SDK, so these slots are what the Android/iOS
+     bridge fills; the IDs, formats and cadence rules below are the spec.
+     See admob-integration.md for the loader code and launch checklist. */
+  const AD_UNITS = {
+    home_banner: {
+      format: 'Anchored adaptive banner', ios: 'ca-app-pub-3940256099942544/2435281174',
+      android: 'ca-app-pub-3940256099942544/9214589741', note: 'Docked, so loading it never moves content.' },
+    home_native: {
+      format: 'Native', ios: 'ca-app-pub-3940256099942544/3986624511',
+      android: 'ca-app-pub-3940256099942544/2247696110', note: 'Between Home sections, styled in the app type.' },
+    progress_native: {
+      format: 'Native', ios: 'ca-app-pub-3940256099942544/3986624511',
+      android: 'ca-app-pub-3940256099942544/2247696110', note: 'Read-only screen, so a static slot costs nothing.' },
+    session_inter: {
+      format: 'Interstitial', ios: 'ca-app-pub-3940256099942544/4411468910',
+      android: 'ca-app-pub-3940256099942544/1033173712', note: 'Natural breaks only, at most once every 60s.' },
+    zone_rewarded: {
+      format: 'Rewarded', ios: 'ca-app-pub-3940256099942544/1712485313',
+      android: 'ca-app-pub-3940256099942544/5224354917', note: 'Opt-in only. Grants one extra Trigger Zone.' }
+  };
+  const AD_COOLDOWN = 60 * 1000;      /* AdMob: no new request inside 60s */
+  const AD_BLOCKED_VIEWS = ['walk', 'breathe', 'reflect', 'cleared'];
+  let adLast = 0, adCb = null, adTicker = null;
+
+  const adsEligible = () => !isPaid();                     /* the plan is ad-free */
+  const adsConsented = () => S.consent === 'personal' || S.consent === 'limited';
+
+  function paintAds() {
+    const on = adsEligible() && adsConsented();
+    $$('[data-ad-placement]').forEach(el => {
+      if (el.closest('.adov')) return;                      /* overlays run themselves */
+      el.hidden = !on;
+    });
+    const b = $('#adHomeBannerD');
+    if (b) b.textContent = on
+      ? S.consent === 'personal'
+        ? 'Docked above the tab bar so nothing on screen shifts when it loads.'
+        : 'Docked above the tab bar. Non-personalised fill — your consent is set to non-personalised.'
+      : '';
+  }
+  const adBlock = () => AD_BLOCKED_VIEWS.indexOf(view) !== -1 || !!ce.iv;
+
+  function maybeInterstitial(where) {
+    if (!adsEligible() || !adsConsented() || adBlock()) return false;
+    const now = Date.now();
+    if (now - adLast < AD_COOLDOWN) return false;
+    adLast = now;
+    const u = AD_UNITS.session_inter;
+    $('#adInterD').textContent = u.format + ' at "' + where + '". ' + u.note +
+      ' Never fires during a craving step. Android ' + u.android + ' · iOS ' + u.ios + '.';
+    $('#adInter').hidden = false;
+    return true;
+  }
+  function offerReward(cb) {
+    if (!adsEligible() || !adsConsented()) { toast('Not available', 'This shortcut is for free accounts.'); return; }
+    const u = AD_UNITS.zone_rewarded;
+    adCb = cb; adLast = Date.now();
+    $('#adRewardD').textContent = u.note + ' You choose to start it. Android ' + u.android + ' · iOS ' + u.ios + '.';
+    $('#adRewardCd').textContent = '5';
+    $('#adRewardStart').disabled = false;
+    $('#adRewardStart').textContent = 'Watch the ad';
+    $('#adReward').hidden = false;
+    $('#adRewardStart').focus();
+  }
+  function startReward() {
+    $('#adRewardStart').disabled = true;
+    $('#adRewardStart').textContent = 'Playing…';
+    let n = 5;
+    clearInterval(adTicker);
+    adTicker = setInterval(() => {
+      n--;
+      $('#adRewardCd').textContent = String(Math.max(0, n));
+      if (n > 0) return;
+      clearInterval(adTicker);
+      $('#adReward').hidden = true;
+      if (adCb) { const c = adCb; adCb = null; c(); }
+    }, 1000);
+  }
+  function closeReward() { clearInterval(adTicker); adCb = null; $('#adReward').hidden = true; }
+  function openConsent() { $('#adConsent').hidden = false; }
+  function setConsent(v) {
+    S.consent = v; save(); $('#adConsent').hidden = true;
+    paintAds(); paintEnt(); paintHome();
+    toast('Privacy options', v === 'personal' ? 'Personalised ads on.' : 'Non-personalised ads only.');
+  }
+  $('#adInterClose').addEventListener('click', () => { buzz(6); $('#adInter').hidden = true; });
+  $('#adRewardStart').addEventListener('click', () => { buzz(6); startReward(); });
+  $('#adRewardClose').addEventListener('click', () => { buzz(6); closeReward(); });
+  $('#adConsentPersonal').addEventListener('click', () => setConsent('personal'));
+  $('#adConsentLimited').addEventListener('click', () => setConsent('limited'));
+  $('#privacyOpen').addEventListener('click', () => { buzz(6); openConsent(); });
+  $('#swAds').addEventListener('click', () => {
+    buzz(6); setConsent(S.consent === 'personal' ? 'limited' : 'personal');
+  });
+
+  /* ── theme ───────────────────────────────────────────────────────── */
+  const mq = matchMedia('(prefers-color-scheme: light)');
+  const paintTheme = () => {
+    const t = S.theme === 'auto' ? (mq.matches ? 'light' : 'dark') : S.theme;
+    root.dataset.theme = t;
+    $('#theme').textContent = t === 'dark' ? 'Light' : 'Dark';
+    $$('[data-appearance]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.appearance === S.theme)));
+    /* name the resolved theme, so System is never a guess */
+    const a = $('#appearNow');
+    if (a) a.textContent = S.theme === 'auto'
+      ? 'Following your system. Showing ' + t + '.'
+      : 'Showing ' + t + '.';
+  };
+  mq.addEventListener('change', () => { if (S.theme === 'auto') paintTheme(); });
+  $('#theme').addEventListener('click', () => { buzz(8); S.theme = root.dataset.theme === 'dark' ? 'light' : 'dark'; paintTheme(); save(); });
+  $$('[data-appearance]').forEach(b => b.addEventListener('click', () => { buzz(8); S.theme = b.dataset.appearance; paintTheme(); save(); }));
+  paintTheme();
+
+  /* ── tab bar (rendered once, mirrored into every tab screen) ─────── */
+  const TABS = [
+    { v: 'home', l: 'Home', d: 'M4 11.5 10 5l6 6.5M6.5 10v8.5h7V10' },
+    { v: 'plan', l: 'Plan', d: 'M3.5 17.5h15M5.5 17.5V10M10 17.5V5.5M14.5 17.5v-5M19 17.5V8' },
+    null,
+    { v: 'progress', l: 'Progress', d: 'M3.5 18.5 9 12l4 4 5.5-8' },
+    { v: 'settings', l: 'Settings', d: 'M11 4.2a1 1 0 0 1 1 0l.5 1.9 1.6.7 1.7-1a1 1 0 0 1 1.3.4l.9 1.5a1 1 0 0 1-.2 1.3l-1.5 1.2v1.6l1.5 1.2a1 1 0 0 1 .2 1.3l-.9 1.5a1 1 0 0 1-1.3.4l-1.7-1-1.6.7-.5 1.9a1 1 0 0 1-1 0l-.5-1.9-1.6-.7-1.7 1a1 1 0 0 1-1.3-.4l-.9-1.5a1 1 0 0 1 .2-1.3l1.5-1.2v-1.6L4.4 8.4a1 1 0 0 1-.2-1.3l.9-1.5a1 1 0 0 1 1.3-.4l1.7 1 1.6-.7Z' }
+  ];
+  const tabHTML = v => '<div style="display:contents">' + TABS.map(t => t
+    ? '<button class="tab" data-tab="' + t.v + '" data-od-id="tab-' + t.v + '"' + (v === t.v ? ' aria-current="page"' : '') + '><svg width="19" height="19" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + t.d + '"/></svg><span>' + t.l + '</span></button>'
+    : '<button class="tab tab--craving" id="cravingTab" data-od-id="tab-craving" aria-label="I have a craving — start Craving Escape"><svg width="17" height="17" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13.5 2.5 5 11.5h5l-1.5 8 8.5-9h-5Z"/></svg><span>Craving</span></button>').join('') + '</div>';
+  $$('.tabbar').forEach(b => b.innerHTML = tabHTML(''));
+
+  /* ── navigation ──────────────────────────────────────────────────── */
+  let view = 'home';
+  const show = v => {
+    view = v;
+    $$('.view').forEach(s => { const on = s.dataset.view === v; s.hidden = !on; s.classList.toggle('is-on', on); });
+    $$('.tabbar').forEach(b => b.hidden = v !== 'home' && v !== 'plan' && v !== 'progress' && v !== 'settings');
+    $$('.tab').forEach(b => { if (b.dataset.tab) b.setAttribute('aria-current', b.dataset.tab === v ? 'page' : 'false'); });
+    if (v === 'home') paintHome();
+    if (v === 'plan') paintPlan();
+    if (v === 'subscribe') paintSubscribe();
+    if (v === 'progress') { paintProgress(); paintAds(); }
+    if (v === 'settings') paintEnt();
+    if (v === 'zones') paintZones();
+    try { localStorage.setItem('qs.view', v); } catch (e) {}
+  };
+  document.addEventListener('click', e => {
+    const t = e.target.closest('[data-tab],[data-go],#cravingTab');
+    if (!t) return;
+    if (t.id === 'cravingTab') { buzz([10, 30, 10]); startWalk(); return; }
+    if (t.dataset.tab) { buzz(6); show(t.dataset.tab); return; }
+    if (t.dataset.go) { buzz(6); show(t.dataset.go); }
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+    if (!$('#sheet').hidden) closeSheet();
+    else if (!$('#guideSheet').hidden) closeGuide();
+    else if (!$('#adInter').hidden) $('#adInter').hidden = true;
+    else if (!$('#adReward').hidden) closeReward();
+    else if (!$('#adConsent').hidden) $('#adConsent').hidden = true;
+  }
+  });
+
+  /* ── home: the running timer ─────────────────────────────────────── */
+  const hhmmss = s => { s = Math.max(0, Math.round(s));
+    return [Math.floor(s / 3600), Math.floor(s / 60) % 60, s % 60].map(n => String(n).padStart(2, '0')).join(':'); };
+  const mm = s => Math.floor(Math.max(0, s) / 60) + ' MIN';
+
+  /* Money saved counts every completed smoke-free day including the one in
+     progress: Day 3 = 3 x the daily rate, i.e. $36.00 at 20/day, $12 a pack. */
+  function totals() {
+    const dayRate = (S.cpd / 20) * S.price;
+    return { day: dayRate, month: dayRate * 30, year: dayRate * 365, saved: dayRate * S.day };
+  }
+  function paintHome() {
+    const t = totals();
+    const locked = !timerUnlocked();
+    $('#stDays').textContent = S.day;
+    $('#stCrav').textContent = S.cleared;
+    $('#stSteps').textContent = S.steps.toLocaleString('en-US');
+    $('#stMoney').textContent = money(t.saved);
+    /* the seven days are not part of the plan, so this rail is always shown;
+       what the plan buys is a place in it, so a locked account reads the
+       roadmap and never claims a day it has not earned */
+    $('#homeDayChip').textContent = locked ? 'Not started' : 'Day ' + S.day + ' of 7';
+    /* free keeps one zone, so a locked account is told what it keeps and sent
+       to the Zones screen for the detail — never shown a second zone it could
+       not have saved, and never shown a place name or distance it has not earned */
+    const live = S.zones.filter(z => z.on).slice().sort((a, b) => a.dist - b.dist);
+    $('#homeZonesT').textContent = locked
+      ? ZONE_CAP_FREE + ' zone'
+      : S.zones.length + (S.zones.length === 1 ? ' zone saved' : ' zones saved');
+    $('#homeZonesD').textContent = locked
+      ? 'The place where you usually buy or smoke. The plan removes the cap.'
+      : live.length
+        ? 'Nearest: ' + live[0].name + ' · ' + live[0].dist + ' m away'
+        : 'No zones switched on yet';
+
+    const rail = $('#homeRail');
+    /* the eighth column is the run-without-stopping state, so it is always
+       marked is-cont: its extra height and hairline are structural, not earned.
+       is-on is kept separate because the accent edge and 45% fill are only
+       true once the account is past Day 7 and the hold really is continuous.
+       its title is the plan length rather than a day number, because what
+       continues past Day 7 is the plan and not an eighth day of the ramp */
+    const PLAN_LABEL = S.plan === 3 ? '3M' : '1M';
+    rail.innerHTML = RAMP.map((m, i) => {
+      const st = locked ? '' : i + 1 < S.day ? 'is-done' : i + 1 === S.day ? 'is-now' : '';
+      return '<div class="' + st + '" data-od-id="home-day-' + (i + 1) + '"><div class="bar2"><i style="height:' +
+        (!locked && i + 1 <= S.day ? (i + 1) / 7 * 100 : 8) + '%"></i></div><p class="d">D' + (i + 1) + '</p><p class="m">' + RAMP_SHORT[i] + '</p></div>';
+    }).join('') + '<div class="is-cont ' + (locked ? '' : 'is-on') + '" data-od-id="home-day-continuous"><div class="bar2"><i style="height:' +
+      (locked ? 8 : 100) + '%"></i></div><p class="d">' + PLAN_LABEL + '</p><p class="m">&mdash;</p></div>';
+    rail.setAttribute('aria-label', locked
+      ? 'The seven days hold ' + RAMP_TXT.map(t => t.toLowerCase()).join(', ') +
+        '. After Day 7 the timer runs continuously.'
+      : 'Daily hold. Day ' + Math.min(S.day, 7) + ' of 7 is ' +
+        RAMP_TXT[Math.min(S.day, 7) - 1].toLowerCase() + '. After Day 7 it runs continuously for ' +
+        S.plan + (S.plan === 1 ? ' month' : ' months') + '.');
+
+    const lock = $('#homeTimerLock');
+    lock.hidden = !locked;
+    if (locked) {
+      $('#homeLockTag').textContent = 'Smoke-Free Plan';
+      $('#homeLockT').textContent = 'Start your Smoke-Free Plan';
+      $('#homeLockD').textContent =
+        'One timer that grows every day, then keeps running for the length of your plan. No ads, and as many Trigger Zones as you need.';
+    }
+    /* the pitch and the button both live in the timer card, directly under the
+       ramp they act on, so a locked account reads the roadmap, the reason and
+       the unlock as one block instead of three separate cards. Once the plan is
+       active there is nothing to unlock, so both step aside and the timer stands
+       on its own; Craving Escape in the tab bar carries the filled action. */
+    $('#homeTimerCta').hidden = !locked;
+    /* the unlock is the moment the plan turns into money, so the button says how
+       much: the same day rate the totals card already uses, times the chosen
+       plan, rounded to whole units and grouped the way this currency groups.
+       it stays hidden when the habit inputs make a saving of nothing, because a
+       button that promises a saving it cannot name is worse than a plain one */
+    const months = S.plan === 1 ? 1 : 3;
+    const keeps = Math.round(t.day * 30 * months);
+    const keepLine = $('#homeTimerSave');
+    keepLine.hidden = keeps <= 0;
+    if (keeps > 0) keepLine.textContent = 'Save ' + SYM[S.cur] +
+      keeps.toLocaleString(LOCALE[S.cur] || 'en-US') + ' in ' + months + (months === 1 ? ' month' : ' months');
+    /* keep the Home state switch honest on load, reset and purchase alike */
+    $$('#homeState [data-state]').forEach(b =>
+      b.setAttribute('aria-pressed', String((b.dataset.state === 'plan') === !locked)));
+
+    /* the cap line is the paid confirmation, so it only appears once the
+       account is on the plan; when locked the card's own line says it */
+    const cap = $('#homeZonesCap');
+    cap.hidden = locked;
+    cap.textContent = 'Unlimited zones on the plan.';
+
+    paintSlots();
+    paintEnt();
+    paintAds();
+  }
+
+  function paintEnt() {
+    const paid = isPaid();
+    const row = (dSel, tagSel, txt, tag, on) => {
+      const D = $(dSel), T = $(tagSel);
+      if (!D || !T) return;
+      D.textContent = txt; T.textContent = tag; T.className = 'tag' + (on ? ' tag--on' : '');
+    };
+    const d = trialDays();
+    row('#entTimerD', '#entTimerTag',
+      paid ? 'Runs for the length of your plan' : 'Locked — part of the plan',
+      paid ? 'Plan' : 'Locked', paid);
+    row('#entZonesD', '#entZonesTag',
+      paid ? 'Unlimited' : S.zones.length + ' of ' + zoneCap() + ' used',
+      paid ? 'Plan' : 'Free', paid);
+    row('#entWidgetsD', '#entWidgetsTag',
+      paid ? 'Kept, ad-free' : widgetsUnlocked() ? d + (d === 1 ? ' day' : ' days') + ' of trial left' : 'Ad-supported on free',
+      paid ? 'Plan' : widgetsUnlocked() ? 'Trial' : 'Free', paid);
+    const sw = $('#swAds');
+    if (sw) {
+      sw.hidden = paid;
+      sw.setAttribute('aria-checked', String(S.consent === 'personal'));
+      $('#swAdsD').textContent = S.consent === 'personal'
+        ? 'On — personalised ads and measurement'
+        : 'Off — non-personalised ads only';
+    }
+    const n = $('#entNote');
+    if (n) n.textContent = paid
+      ? 'The plan is ad-free, so no ad request is made at all.'
+      : 'Free accounts show ads. AdMob needs a certified consent platform in the EEA, UK and Switzerland.';
+    /* the account is the purchase gate, so Settings says plainly where it
+       stands: signed out on the free tier, or signed in and able to buy */
+    const aN = $('#acctName'), aD = $('#acctD'), aB = $('#acctBtn');
+    if (aN && aD && aB) {
+      const real = canBuy();
+      aN.textContent = acctLabel();
+      aD.textContent = real
+        ? 'The plan and your progress live on this account.'
+        : 'Everything free is open. The plan needs an account.';
+      aB.textContent = real ? 'Sign out' : 'Sign in';
+    }
+    const mode = paid ? 'plan' : widgetsUnlocked() ? 'trial' : 'locked';
+    $$('#entState [data-state]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.state === mode)));
+  }
+
+  $('#acctBtn').addEventListener('click', () => {
+    if (canBuy()) {
+      S.acct = null; save(); buzz(6); paintEnt();
+      toast('Signed out', 'Signed out on this device. The free tier is still open.');
+      return;
+    }
+    gotoSignin('settings');
+  });
+
+  let tv = null;
+  const tstate = () => {
+    const target = RAMP[Math.min(S.day, 7) - 1] * 60;
+    const elapsed = (Date.now() - S.on) / 1000;
+    const left = target - elapsed;
+    const pct = Math.min(100, Math.max(0, elapsed / target * 100));
+    const done = left <= 0;
+    /* a locked account gets the same hero, at the same size, with the same
+       parts: only the readout and the state line differ, so the section never
+       reflows between the two versions. Zero elapsed is the honest number for
+       a timer that has never run, and the target still comes from the ramp. */
+    if (!timerUnlocked()) {
+      $('#homeDigits').textContent = hhmmss(0);
+      $('#homeDigits').style.fontSize = '';
+      $('#timerState').textContent = 'Timer locked';
+      $('#timerTarget').textContent = mm(target) + ' target';
+      $('#homeRemaining').textContent = 'Target today';
+      $('#homeElapsed').textContent = 'Elapsed ' + hhmmss(0);
+      $('#homeMeter').style.width = '0%';
+      $('#runDot').className = 'dot';
+      $('#homeMeterWrap').setAttribute('aria-label',
+        'The smoke-free timer is locked. Day ' + Math.min(S.day, 7) +
+        ' target is ' + RAMP_TXT[Math.min(S.day, 7) - 1].toLowerCase() + ', and nothing has run yet.');
+      return;
+    }
+    $('#homeDigits').textContent = done ? 'COMPLETE' : hhmmss(left);
+    $('#homeDigits').style.fontSize = done ? 'clamp(28px,10cqi,40px)' : '';
+    $('#timerState').textContent = done ? 'Day ' + S.day + ' complete' : 'Timer is running';
+    $('#timerTarget').textContent = mm(target) + ' target';
+    $('#homeRemaining').textContent = done ? 'Target reached' : 'Remaining today';
+    $('#homeElapsed').textContent = 'Elapsed ' + hhmmss(Math.min(elapsed, target));
+    $('#homeMeter').style.width = pct + '%';
+    $('#runDot').className = 'dot' + (done ? '' : ' dot--run');
+    $('#homeMeterWrap').setAttribute('aria-label', 'Day ' + S.day + ' timer, ' + Math.round(pct) + ' percent complete');
+  };
+  const startTV = () => { clearInterval(tv); tstate(); tv = setInterval(tstate, 1000); };
+
+  /* ── plan ────────────────────────────────────────────────────────── */
+  /* Only what the plan actually adds. Craving Escape and the log and Progress
+     are free either way, so listing them here would claim an upgrade that
+     does not exist — those are stated plainly on the Subscribe screen instead. */
+  const PLAN_ADDS = [
+    ['Smoke-Free Timer', 'Locked, no trial', 'Runs for the length of your plan'],
+    ['Trigger Zones', 'One zone', 'Unlimited zones'],
+    ['Home &amp; Lock Screen widgets', 'Three days, then ad-supported', 'Ad-free, always on']
+  ];
+  const addsMarkup = (rows, p) => rows.map((r, i) =>
+    '<div data-od-id="' + p + '-' + (i + 1) + '">' +
+    '<p class="adds__k">' + r[0] + '</p>' +
+    '<p class="adds__l adds__l--f"><span class="adds__tag">Free</span>' + r[1] + '</p>' +
+    '<p class="adds__l adds__l--p"><span class="adds__tag">Plan</span>' + r[2] + '</p></div>').join('');
+  function paintPlan() {
+    $('#planChip').textContent = S.plan + (S.plan === 1 ? ' month' : ' months');
+    $('#planEyebrow').textContent = 'Day ' + S.day + ' of 7';
+    $('#planCompare').innerHTML = addsMarkup(PLAN_ADDS, 'plan-compare');
+    /* lead with what stays free, then what the plan changes */
+    $('#planCompareNote').textContent = isPaid()
+      ? 'The plan is active. Ads are off and the timer runs for the length of your plan.'
+      : 'Craving Escape, your log and Progress stay free with ads. The Smoke-Free Timer is the plan, and your widgets get three days.';
+    /* the ramp, drawn as a staircase rather than a list */
+    const maxM = RAMP[6];
+    $('#planStair').innerHTML = RAMP.map((m, i) => {
+      const n = i + 1, st = n < S.day ? 'is-done' : n === S.day ? 'is-now' : '';
+      return '<div class="' + st + '" data-od-id="plan-day-' + n + '">' +
+        '<div class="st"><i style="height:' + Math.round(m / maxM * 100) + '%"></i></div>' +
+        '<p class="d">D' + n + '</p><p class="m">' + RAMP_SHORT[i] + '</p></div>';
+    }).join('');
+    $('#planStair').setAttribute('aria-label',
+      'Daily target, Day ' + S.day + ' of 7 is ' + RAMP_TXT[Math.min(S.day, 7) - 1].toLowerCase() + '.');
+    $('#planTailBar').textContent = 'Continuous · ' + PLAN_DAYS[S.plan] + ' days';
+
+    /* each picked slot, set to the half hour */
+    $('#planSlotRows').innerHTML = S.slots.slice()
+      .sort((a, b) => S.slotPlan[a].s - S.slotPlan[b].s).map((k, i) => {
+        const p = S.slotPlan[k];
+        const atFloor = p.s <= DAY_START, atCeil = p.s >= DAY_END - p.l;
+        return '<div class="slotrow" data-od-id="plan-slot-row-' + (i + 1) + '">' +
+          '<div class="slotrow__h"><span class="slotrow__n">Slot ' + (i + 1) + '</span>' +
+          '<span class="slotrow__t">' + hhmm(p.s) + ' – ' + hhmm(p.s + p.l) + '</span></div>' +
+          '<div class="slotrow__c">' +
+          '<div class="step2">' +
+          '<button type="button" data-slot-shift="' + k + '" data-delta="-30"' + (atFloor ? ' disabled' : '') +
+          ' aria-label="30 minutes earlier for slot ' + (i + 1) + '">&minus;</button>' +
+          '<span class="step2__v">' + hhmm(p.s) + '</span>' +
+          '<button type="button" data-slot-shift="' + k + '" data-delta="30"' + (atCeil ? ' disabled' : '') +
+          ' aria-label="30 minutes later for slot ' + (i + 1) + '">+</button>' +
+          '</div>' +
+          '<div class="seg seg--mini" role="group" aria-label="Length of slot ' + (i + 1) + '">' +
+          SLOT_LENS.map(L => '<button type="button" data-slot-len="' + k + '" data-min="' + L + '" aria-pressed="' +
+            (p.l === L) + '">' + (L >= 60 ? L / 60 + 'H' : L + 'M') + '</button>').join('') +
+          '</div></div></div>';
+      }).join('');
+    const total = slotTotal();
+    const target = RAMP[Math.min(S.day, 7) - 1];
+    $('#planSlotTarget').textContent = S.slots.length
+      ? 'Day ' + Math.min(S.day, 7) + ' holds ' + RAMP_TXT[Math.min(S.day, 7) - 1].toLowerCase() +
+        '. Your slots cover ' + durTxt(total) + (total >= target ? '.' : ' of it.')
+      : 'Pick at least one slot so the timer has somewhere to run.';
+    paintSlots();
+  }
+
+  /* Slots are one shared selection: editing them on Home or on Plan edits both. */
+  const SLOT_LENS = [30, 60, 120, 180];
+  const DAY_START = 300;            /* 5:00 AM, earliest a slot may begin */
+  const DAY_END = 1440;             /* midnight, so a slot never runs past the day */
+  const slotTotal = () => S.slots.reduce((a, k) => a + (S.slotPlan[k] ? S.slotPlan[k].l : 0), 0);
+  const hhmm = m => {
+    const h = Math.floor(m / 60) % 24, mi = m % 60;
+    return (h % 12 || 12) + ':' + String(mi).padStart(2, '0') + (h < 12 ? ' AM' : ' PM');
+  };
+  const durTxt = m => m < 60 ? m + ' min'
+    : m % 60 ? Math.floor(m / 60) + ' h ' + (m % 60) + ' min' : Math.floor(m / 60) + ' h';
+  const slotNote = n => n
+    ? n + (n === 1 ? ' slot' : ' slots') + ' · ' + durTxt(slotTotal()) + ' a day'
+    : 'No slots set yet';
+  /* the next thing the timer will do, read off the clock */
+  const slotNow = () => {
+    const d = new Date(), now = d.getHours() * 60 + d.getMinutes();
+    const on = S.slots.map(k => S.slotPlan[k]).filter(Boolean).sort((a, b) => a.s - b.s);
+    if (!on.length) return 'No slots set yet';
+    const run = on.find(p => now >= p.s && now < p.s + p.l);
+    if (run) return 'Running now · until ' + hhmm(run.s + run.l);
+    const next = on.find(p => p.s > now);
+    return 'Next slot · ' + hhmm(next ? next.s : on[0].s) + (next ? '' : ' tomorrow');
+  };
+  function paintSlots() {
+    const on = S.slots.length;
+    $$('#planSlots').forEach(g => g.querySelectorAll('[data-slot]').forEach(b =>
+      b.setAttribute('aria-pressed', String(S.slots.includes(b.dataset.slot)))));
+    const hn = $('#homeSlotNote'), pn = $('#planSlotNote');
+    if (hn) hn.textContent = slotNote(on);
+    if (pn) pn.textContent = slotNote(on);
+
+    /* the slots are the timer's own hours, so a locked account is shown none of
+       them: the section steps aside entirely rather than printing times it has
+       not earned beside a lock word */
+    const locked = !timerUnlocked();
+    const sec = $('#homeSlotsSec');
+    if (sec) sec.hidden = locked;
+    if (locked) return;
+    /* Home shows the times and the next slot, never the picker itself */
+    const list = $('#homeSlotList'), nowEl = $('#homeSlotNow');
+    if (list) list.innerHTML = S.slots.slice()
+      .sort((a, b) => S.slotPlan[a].s - S.slotPlan[b].s).map((k, i) => {
+        const p = S.slotPlan[k];
+        return '<div class="row" data-od-id="home-slot-' + (i + 1) + '">' +
+          '<span class="row__n">' + String(i + 1).padStart(2, '0') + '</span>' +
+          '<span class="row__b"><span class="row__t">' + hhmm(p.s) + ' – ' + hhmm(p.s + p.l) + '</span></span>' +
+          '<span class="row__v">' + durTxt(p.l) + '</span></div>';
+      }).join('');
+    if (nowEl) nowEl.lastElementChild.textContent = slotNow();
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('#planSlots [data-slot]');
+    if (!b) return;
+    const k = b.dataset.slot;
+    S.slots = S.slots.includes(k) ? S.slots.filter(s => s !== k) : S.slots.concat([k]);
+    buzz(8); save(); paintSlots();
+    if (view === 'plan') paintPlan();
+  });
+
+  /* half-hour precision: move a slot's start, or change how long it runs */
+  document.addEventListener('click', e => {
+    const sh = e.target.closest('[data-slot-shift]');
+    if (sh) {
+      const p = S.slotPlan[sh.dataset.slotShift];
+      const next = Math.min(DAY_END - p.l, Math.max(DAY_START, p.s + (+sh.dataset.delta) * 30));
+      if (next !== p.s) { p.s = next; buzz(6); save(); paintPlan(); }
+      return;
+    }
+    const ln = e.target.closest('[data-slot-len]');
+    if (ln) {
+      const p = S.slotPlan[ln.dataset.slotLen];
+      const len = +ln.dataset.min;
+      p.l = Math.min(len, DAY_END - p.s);
+      p.s = Math.min(p.s, DAY_END - p.l);
+      buzz(6); save(); paintSlots(); paintPlan();
+    }
+  });
+
+  /* the Subscribe screen and the Plan screen share one plan length, so
+     both groups sync by value — never by button identity */
+  $$('[data-len]').forEach(b => b.addEventListener('click', () => {
+    S.plan = +b.dataset.len; buzz(8); save();
+    $$('[data-len]').forEach(o => o.setAttribute('aria-pressed', String(+o.dataset.len === S.plan)));
+    paintPlan();
+    paintSubscribe();
+  }));
+
+  /* ── subscribe: the plan choice and what it adds ─────────────────── */
+  /* ── account and the purchase gate ─────────────────────────────────
+     A signed-out free tier keeps all of it: Craving Escape, the log, Progress,
+     one Trigger Zone and the widgets. The plan is bought with an account, so
+     buying while signed out stops at sign-in, and the purchase resumes on the
+     tap that lands one. */
+  const ACCT = { apple: 'Apple', google: 'Google' };
+  const acctLabel = () => ACCT[S.acct] || 'Not signed in';
+  const canBuy = () => S.acct === 'apple' || S.acct === 'google';
+  /* one sign-in screen, two ways in. signFrom is the only thing that differs:
+     arriving from a purchase resumes the purchase, arriving from anywhere else
+     just returns to the app. There is no guest path — the plan is bought with
+     an account, and a signed-out free tier is simply not being signed in. */
+  let signFrom = 'home';
+  const signWasBuy = () => signFrom === 'subscribe' || signFrom === 'zones';
+  const gotoSignin = from => { signFrom = from; buzz(6); show('signin'); };
+  const signIn = p => {
+    S.acct = p; save(); buzz([10, 30, 10]);
+    if (signWasBuy()) { buyPlan(); show('plan'); return; }
+    show('home');
+    toast('Signed in', 'Signed in with ' + ACCT[p] + '. Your progress follows this account.');
+  };
+  $('#signApple').addEventListener('click', () => signIn('apple'));
+  $('#signGoogle').addEventListener('click', () => signIn('google'));
+  $('#signBack').addEventListener('click', () => { buzz(6); show(signFrom); });
+
+  function paintSubscribe() {
+    /* the picker carries both prices, so the CTA is the only thing that has to
+       follow the length — same wording onboarding uses on its last step */
+    $('#subStart').textContent = S.plan === 3 ? 'Start 3-Month Plan' : 'Start 1-Month Plan';
+    $('#subAdds').innerHTML = addsMarkup(PLAN_ADDS, 'subscribe-add');
+  }
+  const buyPlan = () => {
+    S.subs = true; buzz([10, 30, 10]); save();
+    paintEnt(); paintAds(); paintHome();
+    if (view === 'zones') paintZones();
+    if (view === 'plan') paintPlan();
+    toast('Plan active', 'Timer unlocked, zones uncapped, ads off.');
+  };
+  /* every route into a purchase goes through here, so no screen can buy the
+     plan while signed out */
+  const startPurchase = from => {
+    if (canBuy()) { buyPlan(); show('plan'); return; }
+    gotoSignin(from);
+  };
+  /* the button only exists while the timer is locked, so its one job is the
+     plan choice, and the purchase lands back on the timer */
+  $('#homeTimerCta').addEventListener('click', () => { buzz(6); show('subscribe'); });
+  $('#subStart').addEventListener('click', () => startPurchase('subscribe'));
+
+  /* ── review states: paywall (default), free trial, plan ────────────
+     The prototype ships on the paywall. Home carries a two-state switch for
+     the timer and its slots; Settings carries the full three. Both drive this
+     one function, and both repaint from the same state, so they cannot disagree. */
+  const setReviewState = m => {
+    S.subs = m === 'plan';
+    S.trialEnd = m === 'trial' ? Date.now() + TRIAL_MS : 0;
+    save(); buzz(8); tstate();
+    paintHome();
+    if (view === 'zones') paintZones();
+    if (view === 'plan') paintPlan();
+    /* the timer is plan-only, so a trial account still reads as locked on Home */
+    const homeState = isPaid() ? 'plan' : 'locked';
+    $$('#entState [data-state]').forEach(b =>
+      b.setAttribute('aria-pressed', String(b.dataset.state === m)));
+    $$('#homeState [data-state]').forEach(b =>
+      b.setAttribute('aria-pressed', String(b.dataset.state === homeState)));
+    toast(m === 'plan' ? 'Plan' : m === 'trial' ? 'Free trial' : 'Paywall',
+      m === 'plan' ? 'Timer unlocked, zones uncapped, ads off.'
+        : m === 'trial' ? 'Widgets on trial, one zone, ads on.'
+        : 'Timer locked and widget trial spent, ads on.');
+  };
+  $$('#entState [data-state]').forEach(b =>
+    b.addEventListener('click', () => setReviewState(b.dataset.state)));
+  $$('#homeState [data-state]').forEach(b =>
+    b.addEventListener('click', () => setReviewState(b.dataset.state)));
+
+  /* ── progress ────────────────────────────────────────────────────── */
+  function paintProgress() {
+    const t = totals();
+    /* the ramp ends at 21 hours on Day 7, then runs continuously — there is no
+       24-hour mode, so the foot copy is derived from the ramp rather than stated */
+    const done = Math.min(S.day, 7);
+    $('#pgDays').textContent = S.day;
+    $('#pgRampWrap').innerHTML = RAMP.map((m, i) => {
+      const n = i + 1;
+      return '<i class="' + (n < done ? 'is-done' : n === done ? 'is-now' : '') + '"></i>';
+    }).join('');
+    $('#pgRampWrap').setAttribute('aria-label',
+      'Day ' + done + ' of 7, ' + RAMP_TXT[done - 1].toLowerCase() + ' held today.');
+    $('#pgFootL').textContent = RAMP_TXT[done - 1].replace(' HOURS', '') + ' hours today';
+    $('#pgFootR').textContent = done >= 7
+      ? 'Runs continuously'
+      : (7 - done) + (7 - done === 1 ? ' day' : ' days') + ' to continuous';
+    $('#pgCrav').textContent = S.cleared;
+    $('#pgSteps').textContent = S.steps.toLocaleString('en-US');
+    $('#pgMoney').textContent = money(t.saved);
+    /* derived from the same week the chart plots, not a standing figure */
+    $('#pgRate').textContent = DAYS0.filter(v => v > 0).length + ' of 7';
+
+    const max = Math.max(1, ...DAYS0);
+    const wd = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    const today = new Date();
+    $('#pgChart').innerHTML = DAYS0.map((v, i) => {
+      const d = new Date(today); d.setDate(d.getDate() - (6 - i));
+      return '<div class="' + (v === max ? 'is-max' : '') + (i === 6 ? ' is-now' : '') + '" data-od-id="pg-bar-' + (7 - i) + '" title="' +
+        wd[d.getDay()] + ': ' + v + (v === 1 ? ' craving cleared' : ' cravings cleared') + '"><p class="v">' + v + '</p><div class="f" style="height:' + (v / max * 100) + '%"></div></div>';
+    }).join('');
+    $('#pgChart').setAttribute('aria-label', 'Cravings cleared per day, last seven days: ' + DAYS0.join(', '));
+    $('#pgAxis').innerHTML = DAYS0.map((v, i) => {
+      const d = new Date(today); d.setDate(d.getDate() - (6 - i));
+      return '<div class="' + (i === 6 ? 'is-now' : '') + '">' + wd[d.getDay()] + '</div>';
+    }).join('');
+
+    $('#pgRecent').innerHTML = TRIGGERS0.map((g, i) => {
+      const steps = [640, 520, 470, 470][i], mins = [5, 5, 5, 5][i], t = ['08:12', '13:40', '18:05', '21:26'][i];
+      return '<div class="row" data-od-id="pg-recent-' + (i + 1) + '"><span style="width:16px;display:grid;place-items:center;color:var(--muted)">' +
+        '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 7.2 5.8 10 11 4.4"/></svg></span>' +
+        '<span class="row__b"><span class="row__t" style="letter-spacing:.06em;text-transform:none;font-size:14px;font-weight:400">' + g + '</span>' +
+        '<span class="row__d">Walk · ' + steps + ' steps</span></span><span class="row__v">' + t + ' · ' + mins + ' min</span></div>';
+    }).join('');
+  }
+
+  /* ── trigger zones ───────────────────────────────────────────────── */
+  function paintZones() {
+    const b = $('#zonesBody'), f = $('#zonesFoot');
+    const atCap = S.zones.length >= zoneCap();
+    const capNote = isPaid()
+      ? 'Unlimited zones on the plan. ' + S.zones.length + ' saved.'
+      : 'Free keeps ' + ZONE_CAP_FREE + ' zone. ' + S.zones.length + ' of ' + zoneCap() + ' used on this account.';
+
+    if (!S.zones.length) {
+      b.innerHTML = '<div class="empty" data-od-id="zones-empty"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></svg>' +
+        '<p class="row__t" style="margin-bottom:8px;">No zones yet</p><p>Add the places where you usually buy or smoke. Quit Smoke nudges you when you walk into one.</p></div>' +
+        '<p class="prose" style="margin-top:14px;text-align:center;" data-od-id="zones-cap-note-empty">' + capNote + '</p>';
+      f.innerHTML = '<button class="cta" id="zoneAddFirst" data-od-id="cta-zone-add-first">Add your first zone</button>';
+      $('#zoneAddFirst').addEventListener('click', openSheet);
+      return;
+    }
+    b.innerHTML = '<p class="prose">A nudge when you enter a place where you usually buy or smoke. Switch one off and it stays saved.</p><div class="card" style="margin-top:16px;padding:0 16px;" id="zoneList"></div>' +
+      '<p class="prose" style="margin-top:14px;text-align:center;" data-od-id="zones-cap-note">' + capNote + '</p>';
+    $('#zoneList').innerHTML = S.zones.map((z, i) =>
+      '<div class="row" data-od-id="zone-' + (i + 1) + '"><span class="row__b"><span class="row__t">' + z.name + '</span>' +
+      '<span class="row__d">' + (z.dist >= 1000 ? (z.dist / 1000).toFixed(1) + ' km' : z.dist + ' m') + ' away · ' + z.rad + ' m radius</span></span>' +
+      '<button class="icon-btn" data-del="' + i + '" aria-label="Delete ' + z.name + '"><svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 6h12M8 6V4h4v2M6.5 6l.7 10h5.6l.7-10"/></svg></button>' +
+      '<button class="sw" role="switch" aria-checked="' + z.on + '" data-zone="' + i + '" aria-label="Alerts for ' + z.name + '"><i></i></button></div>').join('');
+
+    if (atCap && !isPaid()) {
+      f.innerHTML = '<div class="lock" data-od-id="zones-limit">' +
+        '<p class="lock__t">Free keeps ' + ZONE_CAP_FREE + ' zone</p>' +
+        '<p class="lock__d">The plan saves as many as you need. You can also watch a short ad and add one more for now.</p>' +
+        '<button class="cta" id="zoneUnlock" data-od-id="cta-zone-unlock">Start the plan</button>' +
+        '<button class="cta cta--ghost" id="zoneReward" data-od-id="cta-zone-reward">Watch an ad for one more</button>' +
+        '</div>';
+      $('#zoneUnlock').addEventListener('click', () => startPurchase('zones'));
+      $('#zoneReward').addEventListener('click', () => offerReward(() => {
+        S.zoneBonus = (S.zoneBonus || 0) + 1; save();
+        paintZones(); paintHome(); paintEnt();
+        toast('Zone added', ZONE_CAP_FREE + (S.zoneBonus > 1 ? S.zoneBonus : '') + ' free zones on this account.');
+      }));
+    } else {
+      f.innerHTML = '<button class="cta" id="zoneNew" data-od-id="cta-zone-new">Add a zone</button>';
+      $('#zoneNew').addEventListener('click', openSheet);
+    }
+    $$('[data-zone]').forEach(sw => sw.addEventListener('click', () => {
+      const z = S.zones[+sw.dataset.zone]; z.on = !z.on; buzz(8); save(); sw.setAttribute('aria-checked', String(z.on)); paintHome();
+    }));
+    $$('[data-del]').forEach(d => d.addEventListener('click', () => {
+      const i = +d.dataset.del; buzz([6, 20, 6]); S.zones.splice(i, 1); save(); paintZones(); paintHome(); paintEnt();
+    }));
+  }
+  const openSheet = () => {
+    if (S.zones.length >= zoneCap()) { paintZones(); return; }
+    $('#sheet').hidden = false; requestAnimationFrame(() => { $('#scrim').classList.add('is-on'); $('#sheet').classList.add('is-on'); $('#zoneName').focus(); });
+  };
+  const closeSheet = () => { $('#scrim').classList.remove('is-on'); $('#sheet').classList.remove('is-on'); setTimeout(() => { $('#sheet').hidden = true; }, 320); };
+  $('#scrim').addEventListener('click', () => { if (!$('#sheet').hidden) closeSheet(); else closeGuide(); });
+  $('#zoneCancel').addEventListener('click', closeSheet);
+  $$('#sheet [data-rad]').forEach(b => b.addEventListener('click', () => {
+    $$('#sheet [data-rad]').forEach(o => o.setAttribute('aria-pressed', String(o === b))); buzz(6);
+  }));
+  $('#zoneAdd').addEventListener('click', () => {
+    const name = ($('#zoneName').value || '').trim() || 'New place';
+    const rad = +$('#sheet [data-rad][aria-pressed="true"]').dataset.rad;
+    S.zones.push({ name: name, dist: 60 + Math.floor(Math.random() * 400), rad: rad, on: true });
+    $('#zoneName').value = ''; buzz([10, 30, 10]); save(); closeSheet(); paintZones(); paintHome();
+    toast('Zone added', name + ' · ' + rad + ' m radius');
+  });
+  $('#zoneTest').addEventListener('click', () => {
+    const on = S.zones.find(z => z.on);
+    toast('Trigger Zone', on ? 'Entering ' + on.name + ' — the timer keeps running.' : 'Turn a zone on first.');
+  });
+  let tt = null;
+  const toast = (t, d) => {
+    $('#toastT').textContent = t; $('#toastD').textContent = d;
+    $('#toast').classList.add('is-on'); clearTimeout(tt);
+    tt = setTimeout(() => $('#toast').classList.remove('is-on'), 3600);
+  };
+
+  /* ── craving escape: walk → breathe → reflect → cleared ──────────── */
+  const ce = { step: null, total: 0, left: 0, iv: null, walkMin: 5, breathMin: 5, steps: 0, pattern: [], pi: -1, pt: 0, walking: false };
+  const fmt2 = s => [Math.floor(Math.max(0, s) / 60), Math.floor(Math.max(0, s)) % 60].map(n => String(n).padStart(2, '0')).join(':');
+
+  const arc = (id, left, total) => { $('#' + id).style.strokeDashoffset = (C * (1 - Math.min(1, left / total))).toFixed(1); };
+
+  function stopCE() { clearInterval(ce.iv); ce.iv = null; ce.walking = false; }
+  const setSeg = (name, min) => { $$('[data-seg="' + name + '"] button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.min === min))); };
+  const GUIDE = {
+    walk: { t: 'Why walking works', p: 'guideWalk', c: 'Back to the timer' },
+    breathe: { t: 'Why breathing works', p: 'guideBreathe', c: 'Back to the timer' },
+    plan: { t: 'How the plan works', p: 'guidePlan', c: 'Back to the plan' } };
+  function openGuide(which) {
+    const g = GUIDE[which] || GUIDE.walk;
+    $('#guideSheetT').textContent = g.t;
+    /* every .guide block is toggled from one place, so adding a screen can
+       never leave a stale block visible behind the new one */
+    $$('#guideSheet .guide').forEach(el => { el.hidden = el.id !== g.p; });
+    $('#guideClose').textContent = g.c;
+    $('#guideSheet').hidden = false;
+    requestAnimationFrame(() => { $('#scrim').classList.add('is-on'); $('#guideSheet').classList.add('is-on'); });
+  }
+  function closeGuide() {
+    if ($('#guideSheet').hidden) return;
+    $('#scrim').classList.remove('is-on'); $('#guideSheet').classList.remove('is-on');
+    setTimeout(() => { $('#guideSheet').hidden = true; }, 320);
+  }
+  function startWalk() {
+    stopCE(); ce.step = 'walk'; ce.walkMin = 5; ce.total = 5 * 60; ce.left = ce.total; ce.steps = 0;
+    setSeg('walk', 5); show('walk'); buzz([12, 40, 18]); paintWalk(); ce.iv = setInterval(tickWalk, 1000);
+  }
+  function paintWalk() {
+    $('#walkNum').textContent = fmt2(ce.left);
+    $('#walkSteps').textContent = Math.round(ce.steps).toLocaleString('en-US') + ' steps';
+    $('#walkLeft').textContent = ce.left > 0 ? 'Remaining' : 'Walk complete';
+    $('#walkLive').textContent = ce.left > 0 ? 'Walk timer running.' : 'Walk complete. Move to breathing.';
+    arc('walkArc', ce.left, ce.total);
+    setSeg('walk', ce.walkMin);
+  }
+  function tickWalk() {
+    ce.left--; ce.steps = (ce.total - ce.left) / 60 * CADENCE;
+    if (ce.left <= 0) { ce.left = 0; paintWalk(); buzz([14, 60, 20]); $('#walkLive').textContent = 'Walk complete. Move to breathing.'; stopCE(); return; }
+    paintWalk();
+  }
+  function startBreath() {
+    stopCE(); ce.step = 'breathe'; ce.breathMin = 5; ce.total = 5 * 60; ce.left = ce.total; ce.pi = -1;
+    closeGuide(); setSeg('breathe', 5); show('breathe'); buzz([12, 40, 18]); startPattern(); paintBreath();
+    ce.iv = setInterval(tickBreath, 1000);
+  }
+  function startPattern() {
+    ce.pattern = ce.total <= 150 ? [[4, 'In 4'], [4, 'Out 4']] : [[4, 'In 4'], [7, 'Hold 7'], [8, 'Out 8']];
+    ce.pi = 0; ce.pt = 0;
+    $('#breathPattern').textContent = 'Pattern ' + ce.pattern.map(p => p[1].split(' ')[1]).join('–');
+  }
+  function paintBreath() {
+    $('#breathNum').textContent = fmt2(ce.left);
+    const label = (ce.pattern[ce.pi] || [4, 'In 4'])[1];
+    $('#breathLive').textContent = label;
+    arc('breathArc', ce.left, ce.total);
+    setSeg('breathe', ce.breathMin);
+    $('#breathDone').textContent = ce.left > 0 ? 'Done' : 'Craving cleared';
+  }
+  function tickBreath() {
+    ce.left--;
+    const [len] = ce.pattern[ce.pi] || [4];
+    ce.pt++;
+    if (ce.pt >= len) { ce.pt = 0; ce.pi = (ce.pi + 1) % ce.pattern.length; }
+    if (ce.left <= 0) { ce.left = 0; stopCE(); buzz([14, 60, 20]); paintBreath(); toCleared(); return; }
+    paintBreath();
+  }
+  $$('[data-seg="walk"] button').forEach(b => b.addEventListener('click', () => {
+    if (ce.step !== 'walk') return;
+    buzz(6); ce.walkMin = +b.dataset.min; ce.total = ce.walkMin * 60; ce.left = ce.total; ce.steps = 0;
+    if (!ce.iv) ce.iv = setInterval(tickWalk, 1000);
+    paintWalk();
+  }));
+  $$('[data-seg="breathe"] button').forEach(b => b.addEventListener('click', () => {
+    if (ce.step !== 'breathe') return;
+    buzz(6); ce.breathMin = +b.dataset.min; ce.total = ce.breathMin * 60; ce.left = ce.total; startPattern();
+    if (!ce.iv) ce.iv = setInterval(tickBreath, 1000);
+    paintBreath();
+  }));
+  $$('[data-guide]').forEach(b => b.addEventListener('click', () => { buzz(6); openGuide(b.dataset.guide); }));
+  $('#guideClose').addEventListener('click', () => { buzz(6); closeGuide(); });
+  $('#walkDone').addEventListener('click', () => { stopCE(); startBreath(); });
+  $('#walkStop').addEventListener('click', () => { stopCE(); toCleared(); });
+  $('#breathDone').addEventListener('click', () => { stopCE(); toCleared(); });
+  $('#breathSkip').addEventListener('click', () => { stopCE(); show('reflect'); });
+  $('#reflectGo').addEventListener('click', () => logEscape($('#triggerSel').value, $('#nextSel').value));
+  $('#reflectSkip').addEventListener('click', () => { buzz(6); logEscape('Other', 'Breathing'); });
+  $('#clearedHome').addEventListener('click', () => {
+    buzz(8); show('home');
+    /* Natural break: the session is logged and the user is done, so this is
+       the one point where a full-screen ad is allowed. Never during a craving. */
+    maybeInterstitial('back to Home after a logged craving');
+  });
+  $('#clearedAgain').addEventListener('click', () => { buzz(8); startWalk(); });
+
+  function showReflect() { show('reflect'); }
+  function logEscape(trigger, next) {
+    const steps = Math.round(ce.walkMin * CADENCE);
+    S.cleared++; S.steps += steps; DAYS0[6]++;
+    S.zones = S.zones; save();
+    buzz([12, 50, 18, 50, 24]);
+    $('#clearedCount').textContent = S.cleared + ' cleared';
+    $('#clearedStats').innerHTML =
+      '<div class="row"><span class="row__b"><span class="row__t">Walk</span><span class="row__d">' + ce.walkMin + ' min on your feet</span></span><span class="row__v num">' + steps.toLocaleString('en-US') + ' steps</span></div>' +
+      '<div class="row"><span class="row__b"><span class="row__t">Trigger</span><span class="row__d" style="text-transform:none;letter-spacing:0;font-size:14.5px">' + trigger + '</span></span></div>' +
+      '<div class="row"><span class="row__b"><span class="row__t">Next</span><span class="row__d" style="text-transform:none;letter-spacing:0;font-size:14.5px">' + next + '</span></span></div>' +
+      '<div class="row" style="border-bottom:0"><span class="row__b"><span class="row__t">Smoke-free days</span></span><span class="row__v num">' + S.day + '</span></div>';
+    show('cleared');
+    toast('Logged', S.cleared + ' cravings cleared · ' + S.steps.toLocaleString('en-US') + ' steps walked');
+  }
+  function toCleared() { logEscape('Other', 'Breathing'); }
+
+  /* ── settings: habit, switches, reset ────────────────────────────── */
+  const paintHabit = () => {
+    $('#cpdVal').textContent = S.cpd;
+    $('#priceVal').value = S.price.toFixed(2);
+    $('#curSym').textContent = SYM[S.cur];
+    /* the select has no selected attribute on any option it can restore from,
+       so the stored currency has to be written into it or the control would
+       read USD while the numbers below it are in another currency */
+    $('#curSel').value = S.cur;
+    const t = totals();
+    $('#saveLine').textContent = money(t.day) + ' a day · ' + money(t.month) + ' a month · ' + money(t.year) + ' a year';
+  };
+  const bump = d => { S.cpd = Math.min(Math.max(S.cpd + d, 1), 60); buzz(6); save(); paintHabit(); paintHome(); };
+  $('#cpdUp').addEventListener('click', () => bump(1));
+  $('#cpdDown').addEventListener('click', () => bump(-1));
+  $('#priceVal').addEventListener('input', e => {
+    S.price = Math.max(0, parseFloat(e.target.value.replace(/[^0-9.]/g, '')) || 0);
+    save(); paintHabit(); paintHome();
+  });
+  $('#curSel').addEventListener('change', e => { S.cur = e.target.value; buzz(6); save(); paintHabit(); paintHome(); });
+  $$('[data-switch]').forEach(sw => sw.addEventListener('click', () => {
+    const on = sw.getAttribute('aria-checked') === 'true';
+    sw.setAttribute('aria-checked', String(!on)); buzz(6);
+    if (sw.dataset.switch === 'haptics') S.haptics = !on;
+    if (sw.dataset.switch === 'zoneAlert') S.zones.forEach(z => z.on = !on);
+    save(); if (sw.dataset.switch === 'zoneAlert') paintZones();
+  }));
+  $('#reset').addEventListener('click', () => {
+    S = Object.assign({}, DEF, { zones: ZONES0.map(z => Object.assign({}, z)), trialEnd: 0 });
+    DAYS0.splice(0, DAYS0.length, 1, 1, 0, 0, 2, 0, 0);
+    adLast = 0;
+    save(); buzz(10); paintHabit(); paintHome(); paintSlots(); show('home');
+    toast('Reset', 'Sample profile restored.');
+  });
+
+  /* ── clock ───────────────────────────────────────────────────────── */
+  const tickClock = () => { const d = new Date(); $('#clock').textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0'); };
+  tickClock(); setInterval(tickClock, 20000);
+
+  /* ── boot ────────────────────────────────────────────────────────── */
+  $$('[data-len]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.len === S.plan)));
+  paintHabit(); paintHome(); paintSlots(); startTV();
+  let v0 = 'home';
+  try { v0 = localStorage.getItem('qs.view') || 'home'; } catch (e) {}
+  /* onboarding hands over on 'subscribe' when the plan is started, so that view
+     has to be restorable or the hand-off would silently land on Home */
+  show(['home', 'plan', 'progress', 'settings', 'zones', 'subscribe'].includes(v0) ? v0 : 'home');
+})();
+</script>
+</body>
+</html>
